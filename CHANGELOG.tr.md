@@ -8,6 +8,18 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.1.0-alpha02] - 2026-10-30
+
+0.1.0'ın ikinci önizlemesi, tek bir değişiklikle: bir sayfa varsayılan olarak geniş bir pencerenin bütün genişliğini alır.
+
+### Değişenler
+
+#### Bileşenler
+
+`com.pantrixui:components`
+
+*   `PantrixPageScaffold` ve `PantrixLazyPageScaffold` varsayılan olarak sayfanın bütün genişliğini alır (`width = PageWidth.Full`): geniş bir pencere 1040 dp'nin ötesini artık boş bırakmaz; `PageWidth.Content` okunan bir sayfayı temanın içerik genişliğinde tutar.
+
 ## [0.1.0-alpha01] - 2026-10-29
 
 Kütüphanenin ilk sürümü 0.1.0'ın ilk önizlemesi: API'si 0.1.0'a kadar değişebilen bir alfa. Kotlin 2.4.21 ve Compose Multiplatform 1.12.2 ile derlenir.
