@@ -8,6 +8,27 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.1.0-alpha03] - 2026-10-30
+
+0.1.0'ın üçüncü önizlemesi, kodlama asistanları için: sunucuyu kendi adresinde sunan bir site için HTTP üzerinden MCP sunucusu, ve her sürümle sunucunun jar'ı, skill ve `llms.txt`.
+
+### Eklenenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   `PantrixMcp.http()`, MCP sunucusunu Streamable HTTP üzerinden, hiçbir web çatısına bağlı olmadan verir; sunucuyu kendi adresinde sunan bir site için: bir asistana o zaman yalnızca adres verilir, ne Java ne jar gerekir.
+*   Her sürüm MCP sunucusunun jar'ını ve `pantrix-ui` skill'ini kendi dosyaları olarak taşır, web demosunun sayfaları `llms.txt`'yi ve götürdüğü belgeleri sunar, paket deposu da `pantrix-ui` eklentisi skill'i getiren bir Claude Code eklenti pazarıdır.
+
+### Değişenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   `com.pantrixui:mcp`, ona bağlanan bir derlemeye MCP'nin Kotlin SDK'sını da verir, çünkü `PantrixMcp.server()` SDK'nın `Server`'ını döndürür.
+
 ## [0.1.0-alpha02] - 2026-10-30
 
 0.1.0'ın ikinci önizlemesi, tek bir değişiklikle: bir sayfa varsayılan olarak geniş bir pencerenin bütün genişliğini alır.
