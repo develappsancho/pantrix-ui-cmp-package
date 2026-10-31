@@ -1,6 +1,83 @@
 {
-  "latest": "0.1.0-alpha04",
+  "latest": "0.1.0-alpha05",
   "versions": [
+    {
+      "version": "0.1.0-alpha05",
+      "date": "2026-10-31",
+      "tag": "v0.1.0-alpha05",
+      "since": "v0.1.0-alpha04",
+      "commit": "2d7ff526aca8",
+      "kotlin": "2.4.21",
+      "compose": "1.12.2",
+      "notes": {
+        "en": "https://github.com/develappsancho/pantrix-ui-cmp-package/blob/main/releases/0.1.0-alpha05/RELEASE_NOTES.md",
+        "tr": "https://github.com/develappsancho/pantrix-ui-cmp-package/blob/main/releases/0.1.0-alpha05/RELEASE_NOTES.tr.md"
+      },
+      "packages": [
+        {
+          "artifact": "com.pantrixui:components",
+          "jar": 7124010,
+          "declarations": 3677,
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "files": 6,
+          "commits": 2
+        },
+        {
+          "artifact": "com.pantrixui:mcp",
+          "jar": 4664579,
+          "files": 1,
+          "commits": 1
+        },
+        {
+          "artifact": "com.pantrixui:detekt-rules",
+          "jar": 91738,
+          "files": 0,
+          "commits": 0
+        },
+        {
+          "artifact": "com.pantrixui:annotations",
+          "jar": 3901,
+          "declarations": 13,
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "files": 0,
+          "commits": 0
+        },
+        {
+          "artifact": "com.pantrixui:foundation",
+          "jar": 843038,
+          "declarations": 1585,
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "files": 0,
+          "commits": 0
+        },
+        {
+          "artifact": "com.pantrixui:material3",
+          "jar": 23161,
+          "declarations": 21,
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "files": 0,
+          "commits": 0
+        },
+        {
+          "artifact": "com.pantrixui:testing",
+          "jar": 46306,
+          "declarations": 70,
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "files": 0,
+          "commits": 0
+        }
+      ]
+    },
     {
       "version": "0.1.0-alpha04",
       "date": "2026-10-31",

@@ -1,0 +1,90 @@
+English: [RELEASE_NOTES.md](https://github.com/develappsancho/pantrix-ui-cmp-package/blob/main/releases/0.1.0-alpha05/RELEASE_NOTES.md)
+
+Pantrix UI 0.1.0-alpha05, 2026-10-31 tarihinde çıktı. `2d7ff526aca8` commit'inden, Kotlin 2.4.21 ve Compose Multiplatform 1.12.2 ile derlendi.
+
+0.1.0'ın beşinci önizlemesi: katlanabilir bir cihaz açılıp kapandıktan hemen sonra iOS'ta açılan katmanlar, her tarayıcıda açılan bir web uygulaması için bir rehber ve Wasm çalıştıramayan bir tarayıcı için JavaScript sürümüyle web demosu.
+
+## Paketler
+
+| Paket | Önceki sürüme göre (v0.1.0-alpha04) | Public API | JVM jar'ı |
+| :--- | :--- | :--- | :--- |
+| `com.pantrixui:components` | 6 dosya, 2 commit | 3.677 bildirim, değişmedi | 6,8 MB, 0,7 KB arttı |
+| `com.pantrixui:mcp` | 1 dosya, 1 commit | izlenmiyor | 4,4 MB, 19,7 KB arttı |
+| `com.pantrixui:detekt-rules` | yok | izlenmiyor | 89,6 KB, değişmedi |
+| `com.pantrixui:annotations` | yok | 13 bildirim, değişmedi | 3,8 KB, değişmedi |
+| `com.pantrixui:foundation` | yok | 1.585 bildirim, değişmedi | 823,3 KB, değişmedi |
+| `com.pantrixui:material3` | yok | 21 bildirim, değişmedi | 22,6 KB, değişmedi |
+| `com.pantrixui:testing` | yok | 70 bildirim, değişmedi | 45,2 KB, değişmedi |
+
+Yalnızca JVM'e derlenen bir modülün ABI dökümü yoktur; bu yüzden public API'si sayılmaz.
+
+## Paketleri almak
+
+Paketler GitHub Packages'tadır, dağıtıldıkları depoda: <https://github.com/develappsancho/pantrix-ui-cmp-package>. GitHub onları okumak için orada da bir token ister: paket okuyabilen (`read:packages`) klasik bir kişisel erişim token'ı, `~/.gradle/gradle.properties`'te `GitHubPackagesUsername` ve `GitHubPackagesPassword` özellikleriyle. Kullanan projenin `settings.gradle.kts`'i:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/develappsancho/pantrix-ui-cmp-package")
+            credentials(PasswordCredentials::class)
+        }
+        google()
+        mavenCentral()
+    }
+}
+```
+
+Kütüphanenin kendi deposundan derlenince `./gradlew clean publishToMavenLocal` onları yerel Maven deposuna koyar; proje o zaman GitHub Packages'ın yerine onu anar:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+    }
+}
+```
+
+Bir modülün bağımlılığı da:
+
+```kotlin
+dependencies {
+    implementation("com.pantrixui:components:0.1.0-alpha05")
+}
+```
+
+## Kodlama asistanları için
+
+Kütüphanenin kaynaklarından yazılan, kodlama asistanları için belgeler her sürümle ve onun sürümünde gelir: onlardan cevap veren MCP sunucusu, `pantrix-ui` skill'i ve `llms.txt`.
+
+| Ne | Nasıl verilir |
+| :--- | :--- |
+| MCP sunucusu, bu sürüme ekli `mcp-0.1.0-alpha05-all.jar`, yerel yayından sonra `~/.m2/repository/com/pantrixui/mcp/0.1.0-alpha05/` içinde de; JDK 17 ve üstünde çalışır | `claude mcp add pantrix-ui -- java -jar <yol>/mcp-0.1.0-alpha05-all.jar` ya da bir istemcinin `mcpServers` alanında aynı komut |
+| `pantrix-ui` skill'i, bu sürüme ekli `pantrix-ui-skill-0.1.0-alpha05.zip` | Bir uygulamanın deposunda `.claude/skills/` içine açılır; ekip onu git'ten alır |
+| Claude Code'un `pantrix-ui` eklentisi; skill'i getirir | `claude plugin marketplace add develappsancho/pantrix-ui-cmp-package`, ardından `claude plugin install pantrix-ui@pantrix-ui` |
+| `llms.txt` ve götürdüğü belgeler, web demosunun yanında | <https://develappsancho.github.io/pantrix-ui-cmp-package/llms.txt>; ne skill ne MCP okuyan bir asistan için |
+
+## Bileşenler
+
+`com.pantrixui:components`
+
+### Düzeltilenler
+
+*   `PantrixModal`, `PantrixDialog`, `PantrixSheet` ve `PantrixCommandPalette`, iOS'ta pencere boyut değiştirdikten hemen sonra açıldıklarında, katlanabilir bir cihaz açılıp kapanınca olduğu gibi, pencereyi doldurur ve scrim'lerini çizer: önceden uygulamayı "Size(2147483647 x 2147483647) is out of range" ile durduruyorlardı.
+
+## Diğer paketler
+
+Değişiklik günlüğünde bu sürüm için `com.pantrixui:mcp` satırı yok.
+
+Değişiklik günlüğünde bu sürüm için `com.pantrixui:detekt-rules` satırı yok.
+
+Değişiklik günlüğünde bu sürüm için `com.pantrixui:annotations` satırı yok.
+
+Değişiklik günlüğünde bu sürüm için `com.pantrixui:foundation` satırı yok.
+
+Değişiklik günlüğünde bu sürüm için `com.pantrixui:material3` satırı yok.
+
+Değişiklik günlüğünde bu sürüm için `com.pantrixui:testing` satırı yok.

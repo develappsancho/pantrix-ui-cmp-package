@@ -8,6 +8,18 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.1.0-alpha05] - 2026-10-31
+
+0.1.0'ın beşinci önizlemesi: katlanabilir bir cihaz açılıp kapandıktan hemen sonra iOS'ta açılan katmanlar, her tarayıcıda açılan bir web uygulaması için bir rehber ve Wasm çalıştıramayan bir tarayıcı için JavaScript sürümüyle web demosu.
+
+### Düzeltilenler
+
+#### Bileşenler
+
+`com.pantrixui:components`
+
+*   `PantrixModal`, `PantrixDialog`, `PantrixSheet` ve `PantrixCommandPalette`, iOS'ta pencere boyut değiştirdikten hemen sonra açıldıklarında, katlanabilir bir cihaz açılıp kapanınca olduğu gibi, pencereyi doldurur ve scrim'lerini çizer: önceden uygulamayı "Size(2147483647 x 2147483647) is out of range" ile durduruyorlardı.
+
 ## [0.1.0-alpha04] - 2026-10-31
 
 0.1.0'ın dördüncü önizlemesi: web'de yedek fontlar, böylece bir tarayıcı Mac tuşlarının işaretleri için Google'dan font indirmez; ve MCP sunucusunu Pantrix UI'ın kendi sitesinden getiren Claude Code eklentisi.
