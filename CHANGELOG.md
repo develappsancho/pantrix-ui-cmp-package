@@ -10,6 +10,21 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.1.0-alpha05] - 2026-10-31
+
+The fifth preview of 0.1.0: overlays that open on iOS right after a foldable has been opened or closed, a guide
+to a web app that opens in every browser, and the web demo with a JavaScript build for a browser that cannot run Wasm.
+
+### Fixed
+
+#### Components
+
+`com.pantrixui:components`
+
+- `PantrixModal`, `PantrixDialog`, `PantrixSheet` and `PantrixCommandPalette` opened on iOS right after the window has
+  changed size, as a foldable's does when it is opened or closed, fill the window and draw their scrim: they used to
+  stop the app with "Size(2147483647 x 2147483647) is out of range".
+
 ## [0.1.0-alpha04] - 2026-10-31
 
 The fourth preview of 0.1.0: fallback fonts on the web, so that a browser fetches no font from Google for the
