@@ -10,6 +10,43 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.1.0-alpha04] - 2026-10-31
+
+The fourth preview of 0.1.0: fallback fonts on the web, so that a browser fetches no font from Google for the
+marks of a Mac's keys, and the Claude Code plugin with the MCP server at Pantrix UI's own site.
+
+### Added
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+- **Fallback fonts:** `PantrixTypeface(fonts, fallbacks)` gives the fonts a browser draws a character in that none of
+  the typeface's has. They are read with the typeface and `areTypefacesLoaded` waits for them, so that Compose for Web
+  fetches no Noto font from Google's servers for such a character: every visitor's browser asked Google for it, an
+  offline page left it blank, and a content security policy had to let Google in.
+- **Pantrix Symbols:** `PantrixTypeface.Default` falls back on Pantrix Symbols, 3 KB cut from Noto's fonts, for the
+  marks a `PantrixShortcut` is written in on Apple's systems (`⌘ ⇧ ⌥ ⌫ ⌦ ⇥ ⇞ ⇟ ⎋`), which a browser fetched from
+  Google until now. Its licence, the SIL Open Font License 1.1, travels with it in the library's resources.
+
+### Changed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The package repository's Claude Code plugin `pantrix-ui` brings the MCP server too, at the address Pantrix UI's site
+  serves it at, `https://pantrixui.com/mcp`: an assistant that installs it needs neither Java nor the jar.
+
+### Fixed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The MCP server's jar leaves when its input ends, also when it ends right after the last message, as
+  `printf … | java -jar` sends it: it used to keep running.
+
 ## [0.1.0-alpha03] - 2026-10-30
 
 The third preview of 0.1.0, for coding assistants: the MCP server over HTTP, for a site that serves it, and the

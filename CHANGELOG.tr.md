@@ -8,6 +8,35 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.1.0-alpha04] - 2026-10-31
+
+0.1.0'ın dördüncü önizlemesi: web'de yedek fontlar, böylece bir tarayıcı Mac tuşlarının işaretleri için Google'dan font indirmez; ve MCP sunucusunu Pantrix UI'ın kendi sitesinden getiren Claude Code eklentisi.
+
+### Eklenenler
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+*   **Yedek fontlar:** `PantrixTypeface(fonts, fallbacks)`, bir tarayıcının yazı tipinin hiçbir fontunda olmayan bir karakteri çizdiği fontları verir. Yazı tipiyle birlikte okunurlar ve `areTypefacesLoaded` onları da bekler; böylece Compose for Web böyle bir karakter için Google'ın sunucularından Noto fontu indirmez: her ziyaretçinin tarayıcısı onu Google'dan istiyordu, çevrimdışı bir sayfa onu boş bırakıyordu ve bir içerik güvenliği politikası Google'a izin vermek zorunda kalıyordu.
+*   **Pantrix Symbols:** `PantrixTypeface.Default`, bir `PantrixShortcut`'ın Apple'ın sistemlerinde yazıldığı işaretler (`⌘ ⇧ ⌥ ⌫ ⌦ ⇥ ⇞ ⇟ ⎋`) için Noto'nun fontlarından kesilmiş 3 KB'lık Pantrix Symbols'a başvurur; bir tarayıcı bunları şimdiye dek Google'dan indiriyordu. Lisansı, SIL Open Font License 1.1, kütüphanenin kaynaklarında onunla birlikte gelir.
+
+### Değişenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   Paket deposunun Claude Code eklentisi `pantrix-ui` MCP sunucusunu da getirir, Pantrix UI'ın sitesinin sunduğu adresiyle, `https://pantrixui.com/mcp`: onu kuran bir asistanın ne Java'ya ne de jar'a ihtiyacı olur.
+
+### Düzeltilenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   MCP sunucusunun jar'ı girdisi bitince çıkar; girdi son mesajın hemen ardından bittiğinde de, `printf … | java -jar`'ın gönderdiği gibi: önceden çalışmayı sürdürüyordu.
+
 ## [0.1.0-alpha03] - 2026-10-30
 
 0.1.0'ın üçüncü önizlemesi, kodlama asistanları için: sunucuyu kendi adresinde sunan bir site için HTTP üzerinden MCP sunucusu, ve her sürümle sunucunun jar'ı, skill ve `llms.txt`.
