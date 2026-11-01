@@ -10,6 +10,62 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.1.0] - 2026-11-01
+
+0.1.0, Pantrix UI's first version after six previews. Before it, the faults a user of the previews would meet were
+looked through and fixed: a link nothing can open, a refresh that fails and an edge of no width no longer reach the
+app; a coloured bar's tabs and buttons read on it; searches compare letters as the theme's language writes them; and
+a pointer over a control shows what a click would press. Two names change before anything is built on them:
+`DividerAlign`'s values, and what `PantrixTooltip`'s `modifier` is applied to. Its packages are still on GitHub
+Packages alone, which asks for a token; Maven Central comes later.
+
+### Changed
+
+#### Components
+
+`com.pantrixui:components`
+
+- **Breaking:** `DividerAlign`'s values are `Start`, `Center` and `End`, as the library's other enums are written: they
+  were `START`, `CENTER` and `END`.
+- **Breaking:** `PantrixTooltip`'s `modifier` is applied to the control's place, so that an alignment or a weight
+  places the control and the label goes with it: it used to be applied to the label.
+- A control a press can choose lays a faint cover of its own colour on itself while a pointer is over it, as a menu's
+  rows and a calendar's days did, so that a mouse shows what a click would press: `PantrixButton`, `PantrixIconButton`,
+  `PantrixChip`, `PantrixSegmentButton`, `PantrixTabs`, a `PantrixCard` with an `onClick`, `PantrixCheckbox`,
+  `PantrixRadioButton`, `PantrixSwitchButton`, `PantrixPagination`, the navigation bar's and rail's destinations, a
+  chart's legend, a snackbar's buttons, and the buttons inside the text, date, time and secure fields and the elastic
+  date picker.
+- `PantrixSelect`, `PantrixMultiSelect` and `PantrixJsonView` compare letters as the theme's language writes them
+  small: in Turkish "i" finds "İzmir" and not "Isparta", and "ı" finds "Isparta". `jsonViewSearchPaths` takes the
+  `language` to search in.
+- `PantrixTimePicker`'s column of hours starts at `minTime`'s hour by a clock of 24 hours where `maxTime` comes before
+  `minTime`, so that a night's hours stand together: 22, 23, 00 and on.
+
+### Fixed
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+- `Modifier.focusRing` given a width of nothing draws no ring: Compose drew it a hairline wide.
+
+#### Components
+
+`com.pantrixui:components`
+
+- `PantrixLink(url)` lets go of an address nothing on the device can open, as Compose does for a text's links: it used
+  to stop the app.
+- `PantrixElasticDatePicker`'s Refresh button stops spinning where its `onRefresh` throws: the error used to stop the
+  app.
+- An edge, a ring or a line whose style gives it no width is not drawn: `PantrixChip`, `PantrixAlert`, `PantrixTag`,
+  `PantrixFileItem`, `PantrixFileDrop`, `PantrixTextField`, `PantrixFilledTextField`, `PantrixRadioButton`,
+  `PantrixCheckbox`, `PantrixSidebar`'s guide, `PantrixButtonGroup`'s divider and a select's marked row drew one a
+  hairline wide.
+- On a fill that says what is written on it, a top bar of the brand's colour, `PantrixTabs`' selected tab and its line,
+  `ButtonVariant.Outline` and `ButtonVariant.Text` buttons and an icon button with no fill of its own are written as
+  the fill says, and so is a focus ring there: they were drawn in the theme's `primary`, which could hardly be told
+  from the fill.
+
 ## [0.1.0-alpha06] - 2026-11-01
 
 The sixth preview of 0.1.0, for coding assistants and the tools built on them: the MCP server searches in Turkish
