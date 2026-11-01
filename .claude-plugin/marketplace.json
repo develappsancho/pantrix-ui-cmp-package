@@ -1,0 +1,14 @@
+{
+  "name": "pantrix-ui",
+  "description": "Pantrix UI for coding assistants: how to build Compose Multiplatform screens with it, in its own words",
+  "owner": {
+    "name": "Pantrix UI"
+  },
+  "plugins": [
+    {
+      "name": "pantrix-ui",
+      "source": "./plugins/pantrix-ui",
+      "description": "The skill pantrix-ui of Pantrix UI 0.1.0-alpha03: the library's rules, its components for Material's names and the steps of writing and reviewing a screen"
+    }
+  ]
+}

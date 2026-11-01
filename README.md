@@ -7,7 +7,7 @@ web, built directly on Compose Foundation with no dependency on Material. This r
 from: its Maven packages, its releases with their notes, and its demo app on each platform. The library's source is
 kept in a repository of its own.
 
-The latest version is **0.1.0-alpha02**, of 2026-10-30: [its release](https://github.com/develappsancho/pantrix-ui-cmp-package/releases/tag/v0.1.0-alpha02), with what changed in each
+The latest version is **0.1.0-alpha03**, of 2026-10-30: [its release](https://github.com/develappsancho/pantrix-ui-cmp-package/releases/tag/v0.1.0-alpha03), with what changed in each
 package, [the changelog](./CHANGELOG.md) and [every version](./versions.json).
 
 ## Packages
@@ -49,25 +49,53 @@ dependencyResolutionManagement {
 }
 ```
 
+Built from the library's own repository, `./gradlew clean publishToMavenLocal` puts the packages in the local Maven
+repository instead, and a project names it in place of GitHub Packages:
+
+```kotlin
+dependencyResolutionManagement {
+    repositories {
+        mavenLocal()
+        google()
+        mavenCentral()
+    }
+}
+```
+
 And a module's dependency:
 
 ```kotlin
 dependencies {
-    implementation("com.pantrixui:components:0.1.0-alpha02")
+    implementation("com.pantrixui:components:0.1.0-alpha03")
 }
 ```
 
 ## The demo
 
 The demo shows every component, with its examples and their code. Its files are attached to [each
-release](https://github.com/develappsancho/pantrix-ui-cmp-package/releases/tag/v0.1.0-alpha02):
+release](https://github.com/develappsancho/pantrix-ui-cmp-package/releases/tag/v0.1.0-alpha03):
 
 | Platform | File | How it is opened |
 | :--- | :--- | :--- |
-| Android 11 (API 30) or newer | `PantrixUI-0.1.0-alpha02.apk` | Installed on a device or an emulator: `adb install PantrixUI-0.1.0-alpha02.apk` |
-| macOS, on Apple silicon | `PantrixUI-0.1.0-alpha02.dmg` | Opened, and PantrixUI moved to Applications. It is signed and notarized by Apple. |
-| The iOS simulator, on a Mac with Apple silicon | `PantrixUI-0.1.0-alpha02-ios-simulator.zip` | Unzipped, and installed in a booted simulator: `xcrun simctl install booted PantrixUI.app` |
+| Android 11 (API 30) or newer | `PantrixUI-0.1.0-alpha03.apk` | Installed on a device or an emulator: `adb install PantrixUI-0.1.0-alpha03.apk` |
+| macOS, on Apple silicon | `PantrixUI-0.1.0-alpha03.dmg` | Opened, and PantrixUI moved to Applications. It is signed and notarized by Apple. |
+| The iOS simulator, on a Mac with Apple silicon | `PantrixUI-0.1.0-alpha03-ios-simulator.zip` | Unzipped, and installed in a booted simulator: `xcrun simctl install booted PantrixUI.app` |
 | The web | [https://develappsancho.github.io/pantrix-ui-cmp-package/](https://develappsancho.github.io/pantrix-ui-cmp-package/) | In a browser with WebAssembly's garbage collection: Chrome or Edge 119, Firefox 120, Safari 18.2, or newer |
+
+## For coding assistants
+
+Pantrix UI writes its own documents for coding assistants (Claude Code, Cursor, Claude Desktop…) from its sources, so
+that an assistant writes Pantrix's components and not Material's. Each of them is of version 0.1.0-alpha03:
+
+| What | Where | How it is given |
+| :--- | :--- | :--- |
+| The Claude Code plugin, with the skill `pantrix-ui` | This repository, which is a marketplace of plugins | `claude plugin marketplace add develappsancho/pantrix-ui-cmp-package`, then `claude plugin install pantrix-ui@pantrix-ui` |
+| The MCP server: one jar that runs by itself, on JDK 17 or newer | `mcp-0.1.0-alpha03-all.jar`, attached to [the release](https://github.com/develappsancho/pantrix-ui-cmp-package/releases/tag/v0.1.0-alpha03), and in `~/.m2/repository/com/pantrixui/mcp/0.1.0-alpha03/` after a local publish | `claude mcp add pantrix-ui -- java -jar <path>/mcp-0.1.0-alpha03-all.jar`, or the same command in a client's `mcpServers` |
+| The skill on its own | `pantrix-ui-skill-0.1.0-alpha03.zip`, attached to the release | Unzipped into `.claude/skills/` in an app's repository, where the team gets it through git |
+| `llms.txt`, and the documents it leads to | [https://develappsancho.github.io/pantrix-ui-cmp-package/llms.txt](https://develappsancho.github.io/pantrix-ui-cmp-package/llms.txt) | Given to an assistant that reads neither skills nor MCP |
+
+The jar writes the skill and the documents as well: `java -jar mcp-0.1.0-alpha03-all.jar skill .claude/skills` and
+`java -jar mcp-0.1.0-alpha03-all.jar docs <folder>`.
 
 ## Licence
 

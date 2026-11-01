@@ -10,6 +10,32 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.1.0-alpha03] - 2026-10-30
+
+The third preview of 0.1.0, for coding assistants: the MCP server over HTTP, for a site that serves it, and the
+server's jar, the skill and `llms.txt` with each release.
+
+### Added
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- `PantrixMcp.http()` gives the MCP server over Streamable HTTP, bound to no web framework, for a site that serves it
+  at an address of its own: an assistant is then given the address, and needs neither Java nor the jar.
+- Each release carries the MCP server's jar and the skill `pantrix-ui` as files of their own, the web demo's pages
+  serve `llms.txt` and the documents it leads to, and the package repository is a Claude Code plugin marketplace whose
+  plugin `pantrix-ui` brings the skill.
+
+### Changed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- `com.pantrixui:mcp` gives a build that depends on it MCP's Kotlin SDK too, since `PantrixMcp.server()` returns the
+  SDK's `Server`.
+
 ## [0.1.0-alpha02] - 2026-10-30
 
 The second preview of 0.1.0, with one change: a page takes the whole width of a wide window by default.

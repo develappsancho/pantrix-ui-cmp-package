@@ -1,0 +1,13 @@
+{
+  "name": "pantrix-ui",
+  "displayName": "Pantrix UI",
+  "version": "0.1.0-alpha03",
+  "description": "Builds Compose Multiplatform screens with Pantrix UI, a design system with no Material dependency, and keeps to its rules",
+  "author": {
+    "name": "Pantrix UI"
+  },
+  "homepage": "https://github.com/develappsancho/pantrix-ui-cmp-package",
+  "repository": "https://github.com/develappsancho/pantrix-ui-cmp-package",
+  "license": "Apache-2.0",
+  "keywords": ["compose-multiplatform", "kotlin", "design-system", "pantrix-ui"]
+}
