@@ -1,0 +1,264 @@
+# Pantrix UI
+
+> A design system and adaptive UI library for Compose Multiplatform: one Kotlin codebase for Android, iOS, the desktop (JVM) and the web (Wasm and JS). It is built directly on Compose Foundation, with **no Material dependency**, and one theme follows each platform's own conventions: its touch targets, its focus rings, its component geometry.
+
+Version `0.1.0`, under the Maven group `com.pantrixui`:
+
+- `com.pantrixui:components`: Pantrix UI's components for Compose Multiplatform, with no Material dependency.
+- `com.pantrixui:foundation`: Pantrix UI's theme, tokens, adaptive window and platform services for Compose Multiplatform.
+- `com.pantrixui:annotations`: Annotations that describe a Pantrix UI component and its examples.
+- `com.pantrixui:testing`: Test helpers for apps built on Pantrix UI: finding components by their tags, a test theme and doubles.
+- `com.pantrixui:material3`: The bridge between Pantrix UI's theme and Material 3's, in both directions.
+
+For an app's tools, in the same version:
+
+- `com.pantrixui:detekt-rules`: Pantrix UI's detekt rules: the library's conventions, and the ones an app built on it keeps.
+- `com.pantrixui:mcp`: Pantrix UI for coding assistants: the library as data and as Markdown, written from its sources, and an MCP server that answers from them, which its jar with the classifier `all` runs by itself.
+
+```kotlin
+import androidx.compose.runtime.Composable
+import com.pantrixui.components.elements.button.PantrixButton
+import com.pantrixui.foundation.theme.PantrixTheme
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun App() {
+    PantrixTheme {
+        PantrixButton(text = stringResource(Res.string.save), onClick = { /* … */ }, tagKey = "save")
+    }
+}
+```
+
+Code that uses Pantrix UI keeps to these rules:
+
+1. **No Material.** Write Pantrix's components (`PantrixButton`, `PantrixText`, `PantrixTextField`…), never Material's
+   (`Button`, `Text`, `TextField`), and wrap the app in `PantrixTheme`, not `MaterialTheme`. The library has no
+   Material dependency; an app that also keeps Material 3 bridges the two themes with `com.pantrixui:material3`.
+2. **Text through Pantrix.** Text is drawn by `PantrixText` and typed into Pantrix's text fields, never by
+   `BasicText`, `BasicTextField` or `BasicSecureTextField`: those miss the theme's type, its colours and what a screen
+   reader is told.
+3. **Values from the theme.** Colours come from `PantrixTheme.colors`, type from `PantrixTheme.typography`, gaps from
+   `PantrixTheme.spacing` and corners from `PantrixTheme.shapes`, not from a `Color(0xFF…)` or a `dp` written into a
+   screen. A component's own look changes through its `style` and `colors` parameters.
+4. **Every control a `tagKey`.** A button, a field, a switch, a select gets a `tagKey`, the same in every language:
+   `PantrixButton(tagKey = "save")` is tagged `Button_save`, and inside `TestScope("Checkout") { … }` it is
+   `Checkout.Button_save`. A control bound to a form's field takes the field's `id` instead. A tag is never built from
+   visible text.
+5. **An image says what it shows** with its `contentDescription`, or says it is decoration with
+   `contentDescription = null`; a description is never empty. An icon button's `contentDescription` names its action.
+6. **Start and end, not left and right.** Lay out with `padding(start = …)` and `Alignment.Start`, never with
+   `absolutePadding`, `absoluteOffset`, `AbsoluteAlignment` or `Arrangement.Absolute`, so that a screen turns round in
+   a language read from right to left.
+7. **Imports from the documents.** Every component lives in a package of its own:
+   `com.pantrixui.components.elements.button.PantrixButton`. Take the imports the documents give with each example
+   rather than guessing them.
+8. **Parameters from the documents.** Check a component's parameters, what each takes and its default before calling
+   it (`get_component_metadata`, or the API of its page), and give arguments by name. Never call a component with a
+   parameter the documents do not list.
+9. **Words from resources.** What an app shows comes from its resources (`stringResource(Res.string.save)`), as the
+   components' short examples do. Pantrix's components say their own words (`Close`, `Loading`) in the theme's
+   language by themselves.
+10. **Windows, not devices.** A layout reads the window it is drawn in (`PantrixTheme.window`), not the device it runs
+    on. The adaptive scaffolds `PantrixListDetailScaffold`, `PantrixSupportingPaneScaffold` and `PantrixTwoPane`
+    already arrange their panes by the window's size and its folds.
+11. **Tests on Pantrix's helpers.** A UI test draws the screen in `PantrixTestTheme`, which is the same on every
+    machine, and finds a component by its tag: `onPantrixNode("Button", "save")`, from `com.pantrixui:testing`.
+
+Each page below is a page of the demo app as Markdown: what it is for, what it can do, examples whose code the demo compiles, with their imports, and the API it documents. A guide tells how a part of the library is used across an app: the problem every Compose Multiplatform app has there, the library's answer, its pitfalls and how it is tested. A module's API reference has every public declaration of the module, and `llms-full.txt` all of it in one file.
+
+An assistant given Pantrix UI's MCP server, `pantrix-ui`, asks these same documents through its tools, and one given the skill `pantrix-ui` has these rules, how a screen is built and how the parts of the library fit together.
+
+## Foundations
+
+- [Colours](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/colors.md): The theme's colours: `PantrixTheme.colors`.
+- [Typography](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/typography.md): The theme's type scale: `PantrixTheme.typography`.
+- [Spacing](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/spacing.md): The spacing scale: a screen's gaps and paddings are built from these seven steps.
+- [Shapes](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/shapes.md): The shape scale: how round the corners are, from square to fully round.
+- [Elevation](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/elevation.md): The elevation scale: how far a surface stands out from what is under it, by its shadow.
+- [Motion](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/motion.md): Durations and easings: how long a transition lasts and how it speeds up and slows down.
+- [Density](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/density.md): The interface density: how much air a screen has.
+- [Component styles](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/component-styles.md): A component's measures and form are its style: its height, its padding, its corners, its icon's size.
+- [Nested theme](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/theme-inside-another.md): A theme inside another: where a part of the screen is to look different, that part is wrapped in a second `PantrixTheme`, and only what changes is given.
+
+## Elements
+
+- [Button](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/button.md): The button that starts an action: save, send, delete. Composable: `PantrixButton`.
+- [Icon Button](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/icon-button.md): A button that is only an icon: close, refresh, search. Composable: `PantrixIconButton`.
+- [Button Group](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/button-group.md): A few actions of the same rank, drawn as one control or side by side with the same gap between them: a toolbar, a stepper, the two buttons under a dialog. Composable: `PantrixButtonGroup`.
+- [Link](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/link.md): A link on its own: not a word inside a sentence, but a text by itself. Composable: `PantrixLink`.
+- [Text](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/text.md): A text in the theme's type scale: a paragraph, a heading, a label. Composable: `PantrixText`.
+- [Auto Text](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/auto-text.md): Text that gets smaller to stay in view: an amount, a title, a name. Composable: `PantrixAutoText`.
+- [Icon](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/icon.md): A square icon, drawn in one colour. Composable: `PantrixIcon`.
+- [Image](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/image.md): A picture: a photo, an illustration, a logo. Composable: `PantrixImage`.
+- [Avatar](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/avatar.md): The picture of a person or a thing: a photograph, the initials of a name, or an icon standing for either. Composable: `PantrixAvatar`.
+- [Badge](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/badge.md): A small mark that stands on something else: a count, or just a dot. Composables: `PantrixBadge`, `PantrixBadgedBox`.
+- [Chip](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/chip.md): A chip is a compact action, a filter that goes on and off, or an item the user put in and can take out again: a recipient, a tag, an applied filter. Composable: `PantrixChip`.
+- [Divider](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/divider.md): A thin line that separates content: between the rows of a list, the sections of a card, the groups of a toolbar. Composable: `PantrixDivider`.
+- [Spinner](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/spinner.md): A spinning arc that says something is in progress: while a page loads, while a save is under way. Composable: `PantrixSpinner`.
+- [Skeleton](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/skeleton.md): A pale block that stands in for content that has not arrived yet: the lines of a paragraph that is loading, an avatar's circle, an image's rectangle. Composables: `PantrixSkeleton`, `PantrixSkeletonText`.
+
+## Form
+
+- [Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/text-field.md): Text the user types: a name, an email address, a note of a few lines. Composable: `PantrixTextField`.
+- [Filled Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/filled-text-field.md): A text field whose label is inside its box. Composable: `PantrixFilledTextField`.
+- [Secure Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/secure-text-field.md): A field for text that is not to be read over a shoulder: a password, a PIN, a card's security code. Composable: `PantrixSecureTextField`.
+- [Filled Secure Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/filled-secure-text-field.md): A secure text field whose label is inside its box: a password, a PIN or a card's security code, in the filled text field's box. Composable: `PantrixFilledSecureTextField`.
+- [Auto Resize Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/auto-resize-text-field.md): A text field whose text gets smaller to stay in view: an amount, a card number, a short note; anything that is read whole. Composable: `PantrixAutoResizeTextField`.
+- [Filled Auto Resize Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/filled-auto-resize-text-field.md): A text field whose label is inside its box and whose text gets smaller to stay in view: an amount, a card number, a short note, in the filled text field's box. Composable: `PantrixFilledAutoResizeTextField`.
+- [Text Area](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/text-area.md): Text of several lines: a comment, a message, a note. Composable: `PantrixTextArea`.
+- [Filled Text Area](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/filled-text-area.md): Text of several lines in a filled box: a comment, a message, a note. Composable: `PantrixFilledTextArea`.
+- [Checkbox](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/checkbox.md): A box that is checked or not, and the label beside it. Composables: `PantrixCheckbox`, `PantrixTriStateCheckbox`.
+- [Radio Button](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/radio-button.md): One of several options: a ring and the label beside it. Composables: `PantrixRadioButton`, `PantrixRadioGroup`.
+- [Switch Button](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/switch-button.md): A setting that is on or off and takes effect at once: a track, a thumb that slides on it, and the label beside it. Composable: `PantrixSwitchButton`.
+- [Segment Button](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/segment-button.md): A few options side by side in one control, one of them selected. Composable: `PantrixSegmentButton`.
+- [Select](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/select.md): One choice out of a list: a country, a currency, a plan. Composable: `PantrixSelect`.
+- [Multi Select](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/multi-select.md): Several choices out of a list: the projects a page is narrowed to, the days a shop is open. Composable: `PantrixMultiSelect`.
+- [File Drop](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/file-drop.md): Where the user gives the app a file: a zone with a dashed edge that opens the platform's picker when pressed and takes the files dropped on it. Composables: `PantrixFileDrop`, `PantrixFileItem`.
+- [Form](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/form.md): A form's fields, its rules and its submission.
+
+## Date & Time
+
+- [Date Picker](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/date-picker.md): Choosing a day or a stretch of days from a calendar turned a month at a time. Composable: `PantrixDatePicker`.
+- [Date Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/date-text-field.md): A text field for a day: the day is typed in digits, or chosen from a calendar that the button at the box's end opens. Composable: `PantrixDateTextField`.
+- [Date Filled Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/date-filled-text-field.md): A filled text field for a day: `PantrixDateTextField` in a filled box. Composable: `PantrixDateFilledTextField`.
+- [Time Picker](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/time-picker.md): Choosing a time from columns: the hours, the minutes, and by a clock of twelve hours the half of the day. Composable: `PantrixTimePicker`.
+- [Time Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/time-text-field.md): A text field for a time of day: the time is typed in digits, or chosen from a time picker that the button at the box's end opens. Composable: `PantrixTimeTextField`.
+- [Time Filled Text Field](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/time-filled-text-field.md): A filled text field for a time of day: `PantrixTimeTextField` in a filled box. Composable: `PantrixTimeFilledTextField`.
+- [Elastic Date Picker](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/elastic-date-picker.md): A range of time that can move with the clock: a dashboard is filtered by it, and "the last 15 minutes" is still the last 15 minutes at the next refresh. Composable: `PantrixElasticDatePicker`.
+
+## Containers
+
+- [Card](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/card.md): A container for one subject: a header, a body and actions on a surface of their own, with media edge to edge above them. Composables: `PantrixCard`, `PantrixCardSkeleton`.
+- [Surface](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/surface.md): The plainest container: it paints a colour in a shape and clips its content to that shape, with an optional 1dp border and a shadow. Composable: `PantrixSurface`.
+- [Scaffold](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/scaffold.md): The layout of a screen: a top bar, a bottom bar and a side bar around the content, and the app's snackbars over the content. Composable: `PantrixScaffold`.
+- [Page Scaffold](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/page-scaffold.md): A screen inside an app's shell: its name and what it can do at its top, and under them what it shows. Composable: `PantrixPageScaffold`.
+- [Showcase Scaffold](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/showcase-scaffold.md): A screen that stands outside the app's shell: sign in, sign up, a password reset, an invitation, a welcome, a page not found. Composable: `PantrixShowcaseScaffold`.
+- [Accordion](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/accordion.md): Sections whose content folds away under their headers, so that a long page can be read a part at a time. Composable: `PantrixAccordion`.
+- [Tabs](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/tabs.md): A row of tabs that switches between views of the same content: one is selected, and an indicator slides to the one selected next. Composable: `PantrixTabs`.
+- [Top Bar](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/top-bar.md): The bar at the top of a screen: the screen's name, with a navigation icon at its start and actions at its end. Composables: `PantrixBackButton`, `PantrixTopBar`.
+- [Alert](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/alert.md): A message about what the user is doing, beside the thing it is about: the form that was just sent, the row about to be deleted, the field that needs a second look. Composable: `PantrixAlert`.
+
+## Navigation
+
+- [Breadcrumb](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/breadcrumb.md): The trail of pages above the one on screen: each a link back to it, the last the page on screen itself. Composable: `PantrixBreadcrumb`.
+- [Navigation Bar](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/navigation-bar.md): The app's top-level destinations along the bottom of the screen: three to five of them, one of them where the app is now. Composable: `PantrixNavigationBar`.
+- [Navigation Rail](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/navigation-rail.md): The app's top-level destinations down the start edge of a wide window, one under another: the navigation bar's place on a tablet, an open foldable and a desktop window. Composable: `PantrixNavigationRail`.
+- [Sidebar](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/sidebar.md): The column of destinations down the side of an app: groups, sections with destinations inside them, and the rail of icons it takes when room runs short. Composable: `PantrixSidebar`.
+
+## Overlays
+
+- [Dialog](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/dialog.md): A window that stops the app to ask the user for a decision, or to give news that must not go unseen. Composable: `PantrixDialog`.
+- [Modal](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/modal.md): A modal layer of the app's own: a scrim over the whole window, and over it content the app draws. Composable: `PantrixModal`.
+- [Sheet](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/sheet.md): A panel over the app for a short task that belongs to the current screen: choosing how to sort, filling in a field or two, picking from a list, looking at the details of what was pressed. Composable: `PantrixSheet`.
+- [Menu](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/menu.md): A list of actions for one element, in a panel that opens beside it: what a "more" button opens, or the actions of a row. Composable: `PantrixMenu`.
+- [Popover](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/popover.md): A layer that opens beside an element and shows more about it than the element itself can: what a status means, what a field expects, a few controls for one row. Composable: `PantrixPopover`.
+- [Tooltip](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/tooltip.md): The short label that sits beside the control it names: the name of an icon-only button, a truncated label in full. Composable: `PantrixTooltip`.
+- [Snackbar](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/snackbar.md): A short message about something the app has just done: "Conversation archived", "Changes saved". Composable: `PantrixSnackbarHost`.
+- [Command Palette](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/command-palette.md): Every command of the app in one place, found by its name and run from the keyboard: the panel Cmd+K or Ctrl+K opens. Composable: `PantrixCommandPalette`.
+- [Diagnostics Inspector](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/diagnostics-inspector.md): What the theme's diagnostics have found, over the app: a button with the number of findings, and on its press a list; the node of the finding chosen in the list is outlined on the screen. Composable: `PantrixDiagnosticsInspector`.
+
+## Data
+
+- [Carousel](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/carousel.md): Slides one beside another, one of them on screen: featured items, a picture gallery, a step-by-step introduction. Composable: `PantrixCarousel`.
+- [Code Block](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/code-block.md): Code set out to be read: in the theme's code type, a line to a line, each part of it in the colour of what it is, and ready to be copied. Composable: `PantrixCodeBlock`.
+- [Data Table](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/data-table.md): A table that shows records row by row and their values column by column: orders, users, invoices. Composable: `PantrixDataTable`.
+- [JSON View](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/json-view.md): A JSON text set out to be read: one value to a line, each level set in from the one that holds it, each kind of value in a colour of its own. Composable: `PantrixJsonView`.
+- [List Item](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/list-item.md): A row of a list: a title, what leads it and what ends it, and a line or two under it. Composable: `PantrixListItem`.
+- [Pagination](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/pagination.md): The row that moves between the pages of a long list or a table: previous, the pages by their numbers, and next. Composables: `PantrixPageJump`, `PantrixPageSize`, `PantrixPagination`.
+- [Tree View](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/tree-view.md): A hierarchy whose branches open and close: folders and files, categories, a document's headings. Composable: `PantrixTreeView`.
+- [Tag](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/tag.md): A short label on a piece of data: a status, a category, a version. Composable: `PantrixTag`.
+
+## Charts
+
+- [Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/chart.md): Values along a run of places: lines and filled areas through the value each series has at each place, with the axis of the places under them and the axis of the values beside them. Composable: `PantrixChart`.
+- [Line Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/line-chart.md): A line chart of rows that are given once: a line for each value read from the rows (`values`), along the places the rows name (`x`). Composable: `PantrixLineChart`.
+- [Area Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/area-chart.md): An area chart of rows that are given once: a line for each value read from the rows, and an area that fills the room between the line and zero. Composable: `PantrixAreaChart`.
+- [Range Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/range-chart.md): A chart that shows what lies between two values at each place: the lowest and the highest temperature of a day, the least and the most a price went to, the hour a shift starts and ends at. Composable: `PantrixRangeChart`.
+- [Bar Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/bar-chart.md): A bar chart of rows that are given once: at each place the rows name, a bar for each value read from the rows. Composable: `PantrixBarChart`.
+- [Waterfall Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/waterfall-chart.md): A chart that shows how an amount comes about, step by step: each bar starts where the one before it ended, and goes up by what the row adds and down by what it takes away. Composable: `PantrixWaterfallChart`.
+- [Candlestick Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/candlestick-chart.md): A chart that shows, at each place, what something opened at, what it closed at, and the highest and the lowest it reached between: a price's trading day, a temperature's day, a measurement's shift. Composable: `PantrixCandlestickChart`.
+- [Pie Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/pie-chart.md): The parts of a whole as the slices of a disc: each slice takes as much room as its value is of the total. Composable: `PantrixPieChart`.
+- [Gauge](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/gauge.md): One value on a scale: it is read by how much of an arc it fills. Composable: `PantrixGauge`.
+- [Progress Circle](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/progress-circle.md): A ring that fills as a piece of work goes on: how much of an upload has gone, how many steps of a set-up are behind, how much of a quota is used. Composable: `PantrixProgressCircle`.
+- [Meter Group](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/meter-group.md): Several amounts of one whole, side by side on one bar: what a storage is filled with, where a budget goes. Composable: `PantrixMeterGroup`.
+- [Status Tracker](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/status-tracker.md): A run of steps as a row of blocks: each block in the colour of what was the case at that step. Composable: `PantrixStatusTracker`.
+- [Sparkline](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/sparkline.md): The run of a number in the room of a word: it stands beside the number it belongs to. Composable: `PantrixSparkline`.
+- [Scatter Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/scatter-chart.md): Points set out by two values: one along the chart, the other up it. Composable: `PantrixScatterChart`.
+- [Radar Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/radar-chart.md): Several measures of one thing are set out on spokes about a middle and joined into a web: its shape is read at a glance, and two things are told apart by theirs. Composable: `PantrixRadarChart`.
+- [Polar Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/polar-chart.md): Bars set out round a middle: each as long from the middle out as its value. Composable: `PantrixPolarChart`.
+- [Heatmap](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/heatmap.md): A grid of cells: each cell in a shade that says how much its value is. Composable: `PantrixHeatmap`.
+- [Treemap](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/treemap.md): A box cut into tiles: each tile as large as its value is of the whole. Composable: `PantrixTreemap`.
+- [Funnel Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/funnel-chart.md): A chart that shows the stages of a way that fewer and fewer get through: the stages stand one under another, each as wide as the number that reached it. Composable: `PantrixFunnelChart`.
+- [Sankey Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/sankey-chart.md): A chart that shows what flows from where to where, and how much. Composable: `PantrixSankeyChart`.
+- [Gantt Chart](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/gantt-chart.md): A chart that shows the tasks of a plan: each task in a row, a bar from the moment it starts to the moment it ends. Composable: `PantrixGanttChart`.
+
+## Platform & services
+
+- [Platform and system](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/platform.md): The platform the code runs on and the system's accessibility settings.
+- [Haptics](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/haptics.md): Haptic feedback: a component asks not for a vibration pattern but for what it means: a selection, a switch turned on or off, a success, an error.
+- [Clipboard](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/clipboard.md): The clipboard, for plain text.
+- [Files](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/files.md): Files, without a component: the platform's own file picker and files dropped on a place.
+- [Keyboard shortcuts](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/shortcuts.md): Keyboard shortcuts: a key and what is held with it.
+- [Accessibility](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/accessibility.md): Accessibility helpers for the app's own control: the ones the library's components use.
+- [Language and words](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/language.md): What the components say by themselves: "Close", "Loading", "Per page", everything said to a screen reader.
+- [Analytics](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/analytics.md): The components' events: a press, a change, a menu that opened.
+- [Analytics connector](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/analytics-connector.md): The class with which an app connects Pantrix's events to its analytics product: the connector given to `PantrixTheme(analytics = …)`.
+- [Test tags](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/test-tags.md): The tag automation finds a component by: `Section.Component_key`.
+- [Diagnostics](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/diagnostics.md): Defects only a running screen can show: a theme whose diagnostics are on looks for them and hands what it finds to a sink.
+- [Building blocks](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/building-blocks.md): The building blocks the library's components are built on: an app that writes its own layer, its own hint or its own control uses them too.
+
+## Adaptive
+
+- [Window classes](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-window.md): The window the theme gives: the width class and the height class of the window the content is drawn in, its size and how its device is folded.
+- [Show and hide](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-visibility.md): Case study: a part that shows only in some windows, on some platforms or with some inputs.
+- [Sign-in screen](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-login.md): Case study: a screen with a marketing panel on the left and a sign-in form on the right.
+- [Table](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-table.md): Case study: a table of orders.
+- [Two panes](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-two-pane.md): `PantrixTwoPane`, which lays two panes side by side or one above the other, and the helpers that say how many panes a layout shows and where the fold of a device that folds is. Composable: `PantrixTwoPane`.
+- [List and detail](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-list-detail.md): A list and the detail of the item opened in it: side by side where there is room, one in the other's place where there is not. Composable: `PantrixListDetailScaffold`.
+- [Supporting pane](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-supporting-pane.md): A screen's main content and a pane that supports it: a document and its comments, a chart and its filters, a map and its results. Composable: `PantrixSupportingPaneScaffold`.
+- [Tabletop](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-tabletop.md): Content that is looked at and the controls that are touched, by how a foldable is held: a video and its player's buttons, a video call and its buttons, a camera's view and its shutter. Composable: `PantrixTabletopLayout`.
+- [Overlays on a fold](https://develappsancho.github.io/pantrix-ui-cmp-package/pages/adaptive-fold-overlays.md): Overlays on a foldable device: a dialog, a sheet, a popover, a menu, a command palette and a snackbar stay in a half of the fold, and none lies across it.
+
+## Guides
+
+- [Adaptive Guide: Fitting the Window](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/adaptive.md): This document explains the window information `PantrixTheme` gives its content: what it is, where it comes from, how it is read and how it is fixed in a test.
+- [Adaptive Usage Guide: Which Helper, When](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/adaptive-usage.md): This document explains, through three sample cases, which of the window helpers to use and how while writing a screen or a component.
+- [Coding Assistants Guide: Teaching Pantrix to an Assistant](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/ai.md): This document describes the documents written so that coding assistants (Claude, Copilot, Cursor…) learn Pantrix from the library's own sources rather than by guessing.
+- [Analytics Guide: Connecting the Components' Events to a Product](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/analytics.md): This document explains which events Pantrix's components report, what an event carries and what it never carries, and how an app connects these events to its own analytics product (Firebase, Amplitude, PostHog…).
+- [Guide to Exporting a Chart as a File](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/chart-export.md): This document explains how a Pantrix chart is exported as PNG, SVG and PDF, what the library does and what it leaves to the app, how the file made reaches the user on each platform, and the limits of the three kinds of file.
+- [Guide to Copying Plain Text to the Clipboard](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/clipboard.md): This document explains why copying a text to the clipboard is not a single call in Compose Multiplatform, what the library gives for it, what a copy button should say and when, and how this is tested.
+- [Date and Time Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/date-time.md): This document explains why a day (year, month, day) and a time of day are not found by themselves in common code in Compose Multiplatform, what the library gives for it, how a day and a time are turned into an app's own type, how a day and a time become a moment, how they are written by language (12 or 24 hours included), how "today" is known, and how a range that slides with the clock ("the last 15 minutes") is kept and read.
+- [Detekt Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/detekt.md): This document says what **detekt** checks in the project, where it runs, the project's own rules, how a finding is dealt with, and how an app that uses Pantrix UI turns these rules on.
+- [Runtime Diagnostics Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/diagnostics.md): This document explains why some flaws show only on a running screen, what the library gives to catch them, how an app turns diagnostics on only in its own debug build, and how this is tested.
+- [Guide to Picking, Dropping and Saving Files](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/files.md): This document explains why, in Compose Multiplatform, a user's giving the app a file (by choosing it in the platform's picker, or by dragging it over an area and dropping it) cannot be done in common code directly, what the library gives for it, how the file is read, and how it is tested; and the app's having a file it made saved by the user too.
+- [Putting the Keyboard Away](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/keyboard-dismissal.md): This document explains why, in Compose Multiplatform, a field's software keyboard cannot be put away on an iPhone, what the library gives for it, and how it is tested.
+- [Keyboard Shortcuts Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/keyboard-shortcuts.md): This document explains why, in Compose Multiplatform, a keyboard shortcut that belongs to the whole window (such as Cmd+K or Ctrl+K) does not work with a single `onPreviewKeyEvent`, what the library gives for it, how a shortcut is written on each system, and how it is tested.
+- [Material 3 Bridge Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/material3.md): This document explains how an app that uses Material 3 can move to Pantrix, or use the two together: the two themes speaking the same colours, type and shapes.
+- [Guide to a Modal Layer of the App's Own](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/modal.md): This document explains why, in Compose Multiplatform, an app's building a modal layer of its own (a scrim over the whole window, and over it content the app draws) is another job on each platform, what the library gives for it, and how it is tested.
+- [Number Formatting Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/number-format.md): This document explains why, in Compose Multiplatform, an amount (`1234567.891`) does not come out the same on the screen on every platform, what the library gives for it, and how it is tested.
+- [Guide to a Number Field and Its Action Key](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/number-keyboard.md): This document explains why a field in Compose Multiplatform that a number is typed into, and that does something once it is typed, cannot be sent on an iPhone, what the library gives for it, and how it is tested.
+- [Resize Pointer Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/pointer-icons.md): This document explains why, in Compose Multiplatform, the pointer does not change by itself over a control that makes something larger or smaller when it is dragged, what the library gives for it, and how it is tested.
+- [Guide to Focus in Content That Scrolls Beneath a Bar](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/scroll-padding.md): This document explains why, in Compose Multiplatform, keyboard focus is lost behind a bar in content that scrolls beneath the bar, what the library gives for it and how it is tested.
+- [System Bars Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/system-bars.md): This document explains why, in a Compose Multiplatform app with a dark theme switch of its own, the parts the system draws, Android's status and navigation bars and iOS's status bar, keyboard and controls, stay in the system's dark mode, what the library gives for it, and how it is tested.
+- [Guide to Testing a Screen](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/testing.md): This document explains why the test of a screen written in Compose Multiplatform changes from machine to machine, how a component is found by its automation tag, what is put in place of the platform's services, and how the same tags reach device automation (Maestro).
+- [Guide to Sorting by a Language's Alphabet](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/text-order.md): This document explains why a list of names is not sorted by the language's alphabet in the common code of Compose Multiplatform, what the library gives for it, and how it is tested.
+- [Typography Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/typography.md): Pantrix's type scale, what text given no style is set in, and the size of what is typed into a text field.
+- [Old Browsers and a Wasm That Will Not Start, on the Web](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/web-compatibility.md): This document says why a Compose Multiplatform web app does not open at all in some browsers, how we found out, and how we mended it.
+- [Guide to a Typeface That Arrives Late on the Web](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/web-fonts.md): This document explains why, on Compose Multiplatform's web target, an app's own typeface arrives a moment late, how we measured it and how we cured it.
+- [Window Title Guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/window-title.md): This document explains why, in Compose Multiplatform, the window of an app of one window and many screens keeps one name whatever is shown, what the library gives for it, and how it is tested.
+
+## API reference
+
+- [com.pantrixui:components](https://develappsancho.github.io/pantrix-ui-cmp-package/api/components.md): Pantrix UI's components for Compose Multiplatform, with no Material dependency.
+- [com.pantrixui:foundation](https://develappsancho.github.io/pantrix-ui-cmp-package/api/foundation.md): Pantrix UI's theme, tokens, adaptive window and platform services for Compose Multiplatform.
+- [com.pantrixui:annotations](https://develappsancho.github.io/pantrix-ui-cmp-package/api/annotations.md): Annotations that describe a Pantrix UI component and its examples.
+- [com.pantrixui:testing](https://develappsancho.github.io/pantrix-ui-cmp-package/api/testing.md): Test helpers for apps built on Pantrix UI: finding components by their tags, a test theme and doubles.
+- [com.pantrixui:material3](https://develappsancho.github.io/pantrix-ui-cmp-package/api/material3.md): The bridge between Pantrix UI's theme and Material 3's, in both directions.
+
+## Optional
+
+- [pantrix-ui.json](https://develappsancho.github.io/pantrix-ui-cmp-package/pantrix-ui.json): The library as data, for tools: its pages with their examples, its components and every public declaration with its parameters.
+- [pantrix-ui.schema.json](https://develappsancho.github.io/pantrix-ui-cmp-package/pantrix-ui.schema.json): The JSON Schema that says what pantrix-ui.json holds.
+- [llms-full.txt](https://develappsancho.github.io/pantrix-ui-cmp-package/llms-full.txt): Every page, every guide and the rest of the API in one file.
+- [CHANGELOG.md](https://develappsancho.github.io/pantrix-ui-cmp-package/CHANGELOG.md): What changed in each version, for someone who uses the library.
+- [skills/pantrix-ui/SKILL.md](https://develappsancho.github.io/pantrix-ui-cmp-package/skills/pantrix-ui/SKILL.md): The skill `pantrix-ui`: these rules, how a screen is built, and references on how the parts of the library fit together, for an assistant to install.

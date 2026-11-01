@@ -1,0 +1,252 @@
+# Guide to Picking, Dropping and Saving Files
+
+This document explains why, in Compose Multiplatform, a user's giving the app a file (by choosing it in the platform's picker, or by dragging it over an area and dropping it) cannot be done in common code directly, what the library gives for it, how the file is read, and how it is tested; and the app's having a file it made saved by the user too. The problem is not Pantrix's own: it shows the same way in **every** Compose Multiplatform project that takes files from its user or gives them files. Section 3 of the document gives the solution with Pantrix's API, section 4 without the library, in a form that can be copied into any project.
+
+Everything said here of Compose was read in the sources of Compose Multiplatform 1.12.1, or seen in a test that runs in this repository, on a device or in a browser; which was seen where is written in sections 7 and 8.
+
+## 1. The Problem
+
+### Symptom
+
+*   Common Compose has no file picker. Behind a "Choose a file" button there is something else on each platform: an activity's result on Android (`ACTION_OPEN_DOCUMENT` or the photo picker), a presented `UIDocumentPickerViewController` or `PHPickerViewController` on iOS, the operating system's window on the desktop, an `<input type="file">` on the web.
+*   The file chosen is a different type on each platform too: a content `Uri` on Android, an `NSURL` on iOS, a `java.io.File` on the desktop, the browser's `File` on the web. Common code knows none of them.
+*   For dropping, Compose has a common `Modifier.dragAndDropTarget`, but the `DragAndDropEvent` it gives carries different things on each platform, and its files cannot be read from common code.
+*   There is no window for saving either: an activity's result that asks for a new document on Android (`ACTION_CREATE_DOCUMENT`), a `UIDocumentPickerViewController` that exports on iOS, the operating system's save dialog on the desktop, the browser's download on the web.
+*   Dragging a file in is a pointer's job: on a phone there is most often nothing to drag. An area that takes files by dropping alone cannot be used on a phone or with a keyboard.
+
+### Cause
+
+Compose's drop event wraps a type of its own on each platform (Compose Multiplatform 1.12.1, the `ui` module):
+
+| Platform | What `DragAndDropEvent` carries | How the files are read |
+| :--- | :--- | :--- |
+| Android | `toAndroidDragEvent()`: a `DragEvent` | The content `Uri`s in the items of `clipData`. Another app's can be read only if `Activity.requestDragAndDropPermissions(event)` is asked for while the drop lasts. |
+| iOS | `items`: `UIDragItem`s (`@ExperimentalComposeUiApi`) | Each item's `itemProvider` loads its file with `loadFileRepresentation…`. The file it gives is deleted once the loading handler returns: it has to be copied inside it. |
+| Desktop | `dragData()`: a `DragData` (`@ExperimentalComposeUiApi`) | `DragData.FilesList.readFiles()`: the addresses of the files on the disk (`file:/…`). |
+| Web | `transferData?.domDataTransferOrNull`: the browser's `DataTransfer` | `files`. The browser gives them only inside the `drop` event: they cannot be read later. |
+
+For pickers there is nothing common at all; each opens with the platform's own code and gives its result in its own type.
+
+## 2. The Solution: Five Parts
+
+In foundation (`com.pantrixui.foundation.files`):
+
+1.  **`PantrixFile`**: its name, its size (`null` where it is not known), its MIME type and `suspend fun readBytes()`. Nothing is read until `readBytes` is called. The platform's own type is there too: `uri` on Android, `url` on iOS, `file` on the desktop, `domFile` on the web. For tests and for files the app makes itself it has a builder from memory: `PantrixFile(name, bytes, mimeType)`.
+2.  **`PantrixFileType`**: a MIME type (its subtype may be `*`) and extensions. The ready ones: `Any`, `Images`, `Videos`, `Audio`, `Pdf`, `Text`. A file fits a type when its MIME type fits **or** its extension is in the list; a file whose type the platform does not say is known by its name too.
+3.  **`FilePicker` and `rememberFilePicker()`**: `pick(FilePickRequest(accept, multiple)) { files -> … }`. It opens the platform's document picker; where only images are asked for (`FilePickRequest.imagesOnly`), Android and iOS open the photo picker. None asks for a permission. `FilePicker` is an interface of one method: a test gives its own picker. Where **`LocalFilePicker`** gives a picker, `rememberFilePicker()` returns it in place of the platform's: a test or a preview gives all the areas of a screen the same picker at once.
+4.  **`Modifier.fileDropTarget(enabled, onOver) { files -> … }`**: turns what is dropped into a list of `PantrixFile`. On Android it asks for the read permission, on iOS it copies the files into the app's temporary folder, on the web it takes the files while the drop lasts. `onOver` says `true` when something that can hold files comes over it, and `false` when it leaves.
+5.  **`FileSaver` and `rememberFileSaver()`**: `save(file) { result -> … }`. It opens the platform's window for saving, writes the file where the user chooses and says what became of it (`FileSaveResult`). `LocalFileSaver` gives a screen a saver of its own.
+
+In the components (`com.pantrixui.components.elements.filedrop`), **`PantrixFileDrop`** (the area that opens the picker when pressed, takes what is dropped on it, and screens what comes by type, size and number) and **`PantrixFileItem`** (the row of a file taken) stand on these.
+
+## 3. With Pantrix
+
+### 3.1. A Form's Attachments
+
+```kotlin
+var attachments by remember { mutableStateOf(emptyList<PantrixFile>()) }
+var refused by remember { mutableStateOf(emptyList<RejectedFile>()) }
+
+PantrixFileDrop(
+    onFiles = { files -> attachments += files },
+    accept = listOf(PantrixFileType.Pdf, PantrixFileType.Images),
+    multiple = true,
+    maxSize = 10_000_000,
+    onRejected = { refused = it },
+    supportingText = if (refused.isEmpty()) "A PDF or an image, 10 MB at most" else "Not taken: ${refused.first().file.name}",
+    error = refused.isNotEmpty(),
+    tagKey = "attachments"
+)
+attachments.forEach { file ->
+    PantrixFileItem(name = file.name, size = file.size, onRemove = { attachments -= file })
+}
+```
+
+*   The area holds no state: the app keeps what is taken and lays it out as rows.
+*   What does not fit goes to `onRejected` with its reasons (`FileRejection.Type`, `Size`, `Count`); what is said of it is the app's.
+*   A screen reader is told, politely, how many files were taken and how many were not.
+
+### 3.2. Reading the File
+
+```kotlin
+scope.launch {
+    val bytes = file.readBytes()          // off the main thread on Android, the desktop and iOS
+    upload(file.name, file.mimeType, bytes)
+}
+```
+
+Whoever wants to read a large file as a stream uses the platform's own type: `contentResolver.openInputStream(file.uri!!)` on Android, `file.file!!.inputStream()` on the desktop.
+
+### 3.3. Without the Area
+
+An app with a design of its own can use foundation's parts alone:
+
+```kotlin
+val picker = rememberFilePicker()
+var over by remember { mutableStateOf(false) }
+Box(
+    Modifier
+        .fileDropTarget(onOver = { over = it }) { files -> attach(files) }
+        .clickable { picker.pick(FilePickRequest(listOf(PantrixFileType.Images))) { attach(it) } }
+)
+```
+
+On the web the picker opens only inside a user's press: `pick` has to be called from a click or a key.
+
+### 3.4. Having a File Saved
+
+Giving the user a file the app made (a theme's file, a report, a chart's picture) is picking's other way round: the user chooses its place and its name, and the app writes it there.
+
+```kotlin
+val saver = rememberFileSaver()
+PantrixButton(
+    text = "Download the theme",
+    onClick = {
+        saver.save(PantrixFile("Theme.kt", source.encodeToByteArray(), "text/plain")) { result ->
+            message = when (result) {
+                FileSaveResult.Saved -> "Saved"
+                FileSaveResult.Started -> "The download started"
+                FileSaveResult.Cancelled -> null
+                FileSaveResult.Failed -> "Could not be saved"
+            }
+        }
+    },
+    tagKey = "download"
+)
+```
+
+*   On each platform the window for saving opens: a window for a new document on Android (`ACTION_CREATE_DOCUMENT`, where the user chooses the provider, the folder and the name), exporting to Files on iOS, the operating system's save dialog on the desktop, the browser's download on the web. None of them asks for a permission.
+*   `onResult` is called once, on the main thread: `Saved`, `Cancelled`, `Failed`; on the web `Started`, since a page is not told how a download ends.
+*   On the web, saving is called from inside a user's press too: a browser may hold back a download no press asked for.
+*   Where `LocalFileSaver` gives a saver, `rememberFileSaver()` returns it, as `LocalFilePicker` does.
+
+## 4. Without Pantrix
+
+What follows are the shortest forms that can be copied into a project without the library; Pantrix's code (`ui/foundation/src/*Main/kotlin/com/pantrixui/foundation/files/`) does the same with its tests and its edge cases.
+
+**Android, the picker** (needs `androidx.activity`; Compose UI brings it already, but at run time alone: to compile, it has to be written out):
+
+```kotlin
+val launcher = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris -> /* … */ }
+launcher.launch(arrayOf("application/pdf", "image/*"))
+// Images alone: ActivityResultContracts.PickVisualMedia(), PickVisualMediaRequest(PickVisualMedia.ImageOnly)
+```
+
+**Android, dropping:**
+
+```kotlin
+Modifier.dragAndDropTarget(
+    shouldStartDragAndDrop = { event -> event.toAndroidDragEvent().clipDescription?.hasMimeType("*/*") == true },
+    target = object : DragAndDropTarget {
+        override fun onDrop(event: DragAndDropEvent): Boolean {
+            val drag = event.toAndroidDragEvent()
+            activity.requestDragAndDropPermissions(drag)   // while the drop lasts
+            val uris = (0 until drag.clipData.itemCount).mapNotNull { drag.clipData.getItemAt(it).uri }
+            return uris.isNotEmpty()
+        }
+    }
+)
+```
+
+**iOS, the picker** (`asCopy = true`: the file is copied into the app's folder, and no security scope is needed):
+
+```kotlin
+val picker = UIDocumentPickerViewController(forOpeningContentTypes = listOf(UTTypePDF), asCopy = true)
+picker.delegate = delegate              // UIKit holds the delegate weakly: it has to be kept somewhere
+LocalUIViewController.current.presentViewController(picker, animated = true, completion = null)
+```
+
+**Desktop, the picker:**
+
+```kotlin
+val dialog = FileDialog(null as Frame?, "Choose a file", FileDialog.LOAD).apply {
+    isMultipleMode = true
+    filenameFilter = FilenameFilter { _, name -> name.endsWith(".pdf", ignoreCase = true) }
+    file = "*.pdf"                       // Windows calls no filter; it reads the name
+    isVisible = true                     // waits until the user closes it
+}
+val files = dialog.files
+```
+
+**Web, the picker and dropping:**
+
+```kotlin
+val input = document.createElement("input") as HTMLInputElement
+input.type = "file"; input.accept = "application/pdf,.pdf"; input.multiple = true
+input.addEventListener("change", { /* input.files */ })
+input.click()                            // inside a user's press
+
+// Dropping: event.transferData?.domDataTransferOrNull?.files, read inside the drop event.
+```
+
+## 5. What the Helper Does Not Do
+
+*   **Reading as a stream.** `readBytes()` takes the whole file into memory. For a stream, the platform's own type is used (3.2).
+*   **The camera.** The photo picker shows the user's pictures; it does not have a photo taken there and then.
+*   **The share sheet.** `FileSaver` writes the file where the user chooses; it does not give it to Android's and iOS's share sheet (to add it to a message, an email). An app that wants the sheet opens it itself ([the chart export guide](https://develappsancho.github.io/pantrix-ui-cmp-package/guides/chart-export.md), section 3).
+*   **A lasting permission.** On Android the read permission of a file chosen lasts while the app runs; it is not made lasting with `takePersistableUriPermission`.
+*   **A result that comes when the activity is built again.** If Android kills the activity and builds it again while the picker is open, the result comes to the new registration, but since there is no `onPicked` waiting it is let go.
+*   **Checking the type while dragging.** The area does not tell apart what does not fit while it is dragged; it refuses it when it is dropped (not every platform says what is being dragged).
+
+## 6. Testing
+
+*   **Replacing the picker.** `PantrixFileDrop(picker = …)` takes a test's picker: `FilePicker { request, onPicked -> onPicked(listOf(PantrixFile("a.pdf", bytes))) }`. The types and the number asked for are read in `request`. Apps test their own forms this way too.
+*   **The picker in an iOS test.** Compose's iOS tests have no app and no `LocalUIViewController`; there `rememberFilePicker()` returns a picker that never answers, like a picker the user closed. A test that has a file chosen has to give its own picker.
+*   **The whole screen's picker.** A test whose areas stand deep in a screen writes `CompositionLocalProvider(LocalFilePicker provides picker) { Screen() }` rather than giving the picker one by one: every place that calls `rememberFilePicker()`, `PantrixFileDrop`'s default among them, takes that picker, and the platform's picker does not open.
+*   **Replacing the saver.** `CompositionLocalProvider(LocalFileSaver provides saver) { Screen() }`: every place that calls `rememberFileSaver()` takes that saver, and no window opens. The test module's `TestFileSaver` keeps what is saved; `PantrixTestTheme` always gives the screen a `TestFileSaver` of its own. In iOS tests `rememberFileSaver()` answers at once that it was cancelled.
+*   **Dropping.** Compose's tests cannot make a drop event. The code that turns what is dropped into files is tested in the platforms' tests with made-up data: an implementation of `DragData.FilesList` on the desktop, `ClipData` and `ClipDescription` on Android, a real `DataTransfer` built in the browser on the web.
+*   **The platforms' pickers.** On Android, Robolectric keeps the intent the activity started and gives the system's answer (`shadowOf(activity).nextStartedActivityForResult`, `receiveResult`): the action the picker opens, its MIME types and the files that come are tested so. Saving's window for a new document is tested so too: the type asked for and the name offered, the bytes written where the user chose, the window closed and a place that cannot be written. On the web the `<input>` the picker puts in the page is read and its `change` sent by hand. On iOS the choice of uniform types and the copying into the temporary folder are tested; the window presented itself is not.
+
+## 7. Pitfalls
+
+*   **Windows's window calls no filter.** The `filenameFilter` of AWT's `FileDialog` works on macOS and Linux, and is not called on Windows. There Pantrix writes the types into the name field as a pattern (`*.pdf;*.png`); the user can still choose another file, and the area refuses it.
+*   **Android's photo picker does not give the real name.** The name of a file that comes from the photo picker is, for privacy, a media number (`1000000648.png`). iOS's photo picker gives the suggested name. Seen in the emulator.
+*   **A borrowed file on iOS.** The file a loader gives is deleted as soon as the loading handler returns. Pantrix copies it into the app's temporary folder inside the handler.
+*   **On the web, dropped files are read only while the event lasts.** `DataTransfer.files` has to be read inside the `drop` event; later it is empty.
+*   **On Wasm the bytes are copied.** In Kotlin/JS a `ByteArray` is the browser's `Int8Array` and is taken as it is; in Kotlin/Wasm the bytes are copied one by one, so a large file is slow.
+*   **The position in drag events built by code.** In a browser, the `offsetX` of a `DragEvent` built with JavaScript comes as half of `clientX` on a screen of pixel density 2; Compose takes the drop to be in the wrong place. A real drag does not do this; in a trial, `offsetX` and `offsetY` have to be written on the event with the right values.
+*   **On iOS what is exported is a copy.** Files exports only a file on the disk: Pantrix writes the bytes in the app's temporary folder, in a folder of their own under the file's name, and deletes that folder once the window has closed.
+*   **On Android the window for a new document needs a `ComponentActivity`.** Like the picker, it uses the activity's register of results; in an activity that keeps no results `save` stops with an error that says so.
+*   **Cutting in the middle.** `TextOverflow.MiddleEllipsis` cuts in the middle on Android alone; on iOS, the desktop and the web it cuts at the end (CMP-6716). The file's row measures the name itself and cuts it in the middle, and tells a screen reader the full name.
+
+## 8. Verification
+
+### Tests
+
+| What | Where |
+| :--- | :--- |
+| Matching types, the MIME table, the file in memory, the picker's request, the picker `LocalFilePicker` gives, the saver `LocalFileSaver` gives | `ui/foundation/src/commonTest/.../files/` (JVM, iOS, JS, Wasm) |
+| Writing where the user chose on the desktop, a place that cannot be written | `FileSaverOnTheDesktopTest` |
+| Android's window for a new document: the type, the name offered, the bytes written, the window closed, a place that cannot be written (Robolectric) | `FileSaverOnAndroidTest` |
+| The download's `Blob`: its type and its number of bytes | `FilesOnTheWebTest` (JS and Wasm) |
+| The copy in the temporary folder, and the answer in a test binary | `FileSaverOnIosTest` |
+| The desktop's filter, the Windows pattern, the list of dropped files | `FilesOnTheDesktopTest` |
+| Android's document and photo pickers (Robolectric), the picker `LocalFilePicker` gives taking their place, the types and addresses of a drop | `FilesOnAndroidTest` |
+| The `<input>` in a browser, dropping with `DataTransfer`, reading the bytes | `FilesOnTheWebTest` (JS and Wasm) |
+| Uniform types, copying into the temporary folder | `FilesOnIosTest` |
+| The area: press and keyboard, screening, words, announcement, analytics; the row; colours; styles | `ui/components/src/commonTest/.../File*Test.kt`, `MiddleCutTest` |
+
+### Looked At by Hand
+
+*   **The web:** dropping with a real `DataTransfer`; the area lighting up while dragging; a refusal and its reason; the row and the progress; the `accept` of the `<input>` a press opens; disabled, and colours of its own; the Turkish words.
+*   **Android emulator (API 34):** the document picker (the filter: a text file did not show), choosing several, the photo picker and the picture read being shown, the accessibility tree.
+*   **iOS simulator:** Files (the filter: a text file could not be chosen), the photo picker and the picture read, the accessibility tree.
+*   **Saving, on the Android emulator (API 33, 2026-10-28):** the demo's "Having a file saved" example opened the window for a new document in Downloads with the file's name (`note.txt`); "Save" wrote the file (its content was read with `adb`, and was the note's text) and the line said `Saved`; the back key closed the window and the line said `Cancelled`.
+*   **Saving, on the iOS simulator (iPhone 18 Pro Max, iOS 27.0, 2026-10-28):** the same example opened the window for exporting to Files on "On My iPhone" with the name "note"; "Save" wrote the file into Files' storage (its content was read) and the line said `Saved`; pulling the window down said `Cancelled`; either way the copy in the app's temporary folder (`com.pantrixui.files`) had been removed.
+*   **Saving, with Maestro on both platforms:** the "A screen with a sample saver" example wrote the given saver's answer (`Saved`) without opening a window (`flows/platform/files.yaml`).
+
+### Not Verified
+
+*   Dropping from another app on Android and on an iPad, choosing and dropping by hand in the desktop app, the windows of Windows and Linux, a screen reader's voice.
+*   Saving: the save dialog was not opened by hand in the desktop app (`FileSaverOnTheDesktopTest` tests the writing and a place that cannot be written); the web's download was not tried by hand in a real browser (`FilesOnTheWebTest` tests its `Blob`).
+
+## 9. Where It Is in This Repository
+
+*   Foundation: `ui/foundation/src/commonMain/kotlin/com/pantrixui/foundation/files/` (`PantrixFile.kt`, `PantrixFileType.kt`, `FilePicker.kt`, `FileDropTarget.kt`, `FileSaver.kt`) and their counterparts in each platform's source set.
+*   Components: `ui/components/src/commonMain/kotlin/com/pantrixui/components/elements/filedrop/`, the cutting in the middle in `components/common/MiddleCut.kt`.
+*   Words: `dropFilesHere`, `chooseFiles`, `orChooseFiles`, `orDropHere`, `dropToAdd`, `filesAdded`, `filesRejected`, `fileSize`, `saveFile` in `PantrixStrings`.
+*   The demo: `app/shared/src/commonMain/kotlin/com/pantrixui/cmp/demo/samples/FileDropSamples.kt`, `FilesSamples.kt`.
+
+## 10. What Is Left Open
+
+In `docs/OPEN_ITEMS.md`: reading as a stream, the camera, checking the type while dragging, `PantrixText`'s cutting in the middle working on every platform, dropping on devices.

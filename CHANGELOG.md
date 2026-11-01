@@ -1,0 +1,337 @@
+# Changelog
+
+Türkçesi: [CHANGELOG.tr.md](./CHANGELOG.tr.md)
+
+What changed in Pantrix UI, for someone who uses the library.
+
+- **Format:** this file follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the versions follow
+  [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+- **Breaking changes:** until 1.0.0, a minor version may break the API. A change that does is marked **Breaking**.
+- **What gets a line:** [CONTRIBUTING.md](./CONTRIBUTING.md#the-changelog) says which changes get one, and how it is
+  written.
+
+## [0.1.0] - 2026-11-01
+
+0.1.0, Pantrix UI's first version after six previews. Before it, the faults a user of the previews would meet were
+looked through and fixed: a link nothing can open, a refresh that fails and an edge of no width no longer reach the
+app; a coloured bar's tabs and buttons read on it; searches compare letters as the theme's language writes them; and
+a pointer over a control shows what a click would press. Two names change before anything is built on them:
+`DividerAlign`'s values, and what `PantrixTooltip`'s `modifier` is applied to. Its packages are still on GitHub
+Packages alone, which asks for a token; Maven Central comes later.
+
+### Changed
+
+#### Components
+
+`com.pantrixui:components`
+
+- **Breaking:** `DividerAlign`'s values are `Start`, `Center` and `End`, as the library's other enums are written: they
+  were `START`, `CENTER` and `END`.
+- **Breaking:** `PantrixTooltip`'s `modifier` is applied to the control's place, so that an alignment or a weight
+  places the control and the label goes with it: it used to be applied to the label.
+- A control a press can choose lays a faint cover of its own colour on itself while a pointer is over it, as a menu's
+  rows and a calendar's days did, so that a mouse shows what a click would press: `PantrixButton`, `PantrixIconButton`,
+  `PantrixChip`, `PantrixSegmentButton`, `PantrixTabs`, a `PantrixCard` with an `onClick`, `PantrixCheckbox`,
+  `PantrixRadioButton`, `PantrixSwitchButton`, `PantrixPagination`, the navigation bar's and rail's destinations, a
+  chart's legend, a snackbar's buttons, and the buttons inside the text, date, time and secure fields and the elastic
+  date picker.
+- `PantrixSelect`, `PantrixMultiSelect` and `PantrixJsonView` compare letters as the theme's language writes them
+  small: in Turkish "i" finds "İzmir" and not "Isparta", and "ı" finds "Isparta". `jsonViewSearchPaths` takes the
+  `language` to search in.
+- `PantrixTimePicker`'s column of hours starts at `minTime`'s hour by a clock of 24 hours where `maxTime` comes before
+  `minTime`, so that a night's hours stand together: 22, 23, 00 and on.
+
+### Fixed
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+- `Modifier.focusRing` given a width of nothing draws no ring: Compose drew it a hairline wide.
+
+#### Components
+
+`com.pantrixui:components`
+
+- `PantrixLink(url)` lets go of an address nothing on the device can open, as Compose does for a text's links: it used
+  to stop the app.
+- `PantrixElasticDatePicker`'s Refresh button stops spinning where its `onRefresh` throws: the error used to stop the
+  app.
+- An edge, a ring or a line whose style gives it no width is not drawn: `PantrixChip`, `PantrixAlert`, `PantrixTag`,
+  `PantrixFileItem`, `PantrixFileDrop`, `PantrixTextField`, `PantrixFilledTextField`, `PantrixRadioButton`,
+  `PantrixCheckbox`, `PantrixSidebar`'s guide, `PantrixButtonGroup`'s divider and a select's marked row drew one a
+  hairline wide.
+- On a fill that says what is written on it, a top bar of the brand's colour, `PantrixTabs`' selected tab and its line,
+  `ButtonVariant.Outline` and `ButtonVariant.Text` buttons and an icon button with no fill of its own are written as
+  the fill says, and so is a focus ring there: they were drawn in the theme's `primary`, which could hardly be told
+  from the fill.
+
+## [0.1.0-alpha06] - 2026-11-01
+
+The sixth preview of 0.1.0, for coding assistants and the tools built on them: the MCP server searches in Turkish
+too, puts first what holds the most of a query's words, and gives the answers of eight of its tools as data.
+
+### Added
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The MCP server's tools search in Turkish too, and take a `language`, `en` or `tr`, that picks the language their
+  answer gives the components, the pages, the guides, the examples, the declarations and the icons in: `search_components` finds
+  `PantrixSnackbarHost` by "bildirim", and `PantrixDatePicker` by "tarih seçici" or "tarih secici".
+- Eight of the MCP server's tools, `search_components`, `get_component_metadata`, `search_api`, `get_api`,
+  `search_icons`, `search_documentation`, `list_examples` and `get_example`, give their answer as data too, in the
+  call's structured content, whose shape their output schema says: for a program that builds a page of its own from it.
+- The documents for coding assistants have the library as data in Turkish, `tr/pantrix-ui.json`, and the modules' API
+  in Turkish, `tr/api/<module>.md`, with every component's description and keywords and every icon's description in
+  Turkish.
+
+### Changed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The MCP server's searches put first what holds the most of a query's words and a keyword the query names:
+  "a comment box with several lines" brings `PantrixTextArea` first, where `PantrixLineChart` used to come first.
+
+### Fixed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- `search_icons` says once that an icon is mirrored in a language read from right to left: it used to say it twice.
+
+## [0.1.0-alpha05] - 2026-10-31
+
+The fifth preview of 0.1.0: overlays that open on iOS right after a foldable has been opened or closed, a guide
+to a web app that opens in every browser, and the web demo with a JavaScript build for a browser that cannot run Wasm.
+
+### Fixed
+
+#### Components
+
+`com.pantrixui:components`
+
+- `PantrixModal`, `PantrixDialog`, `PantrixSheet` and `PantrixCommandPalette` opened on iOS right after the window has
+  changed size, as a foldable's does when it is opened or closed, fill the window and draw their scrim: they used to
+  stop the app with "Size(2147483647 x 2147483647) is out of range".
+
+## [0.1.0-alpha04] - 2026-10-31
+
+The fourth preview of 0.1.0: fallback fonts on the web, so that a browser fetches no font from Google for the
+marks of a Mac's keys, and the Claude Code plugin with the MCP server at Pantrix UI's own site.
+
+### Added
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+- **Fallback fonts:** `PantrixTypeface(fonts, fallbacks)` gives the fonts a browser draws a character in that none of
+  the typeface's has. They are read with the typeface and `areTypefacesLoaded` waits for them, so that Compose for Web
+  fetches no Noto font from Google's servers for such a character: every visitor's browser asked Google for it, an
+  offline page left it blank, and a content security policy had to let Google in.
+- **Pantrix Symbols:** `PantrixTypeface.Default` falls back on Pantrix Symbols, 3 KB cut from Noto's fonts, for the
+  marks a `PantrixShortcut` is written in on Apple's systems (`⌘ ⇧ ⌥ ⌫ ⌦ ⇥ ⇞ ⇟ ⎋`), which a browser fetched from
+  Google until now. Its licence, the SIL Open Font License 1.1, travels with it in the library's resources.
+
+### Changed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The package repository's Claude Code plugin `pantrix-ui` brings the MCP server too, at the address Pantrix UI's site
+  serves it at, `https://pantrixui.com/mcp`: an assistant that installs it needs neither Java nor the jar.
+
+### Fixed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The MCP server's jar leaves when its input ends, also when it ends right after the last message, as
+  `printf … | java -jar` sends it: it used to keep running.
+
+## [0.1.0-alpha03] - 2026-10-30
+
+The third preview of 0.1.0, for coding assistants: the MCP server over HTTP, for a site that serves it, and the
+server's jar, the skill and `llms.txt` with each release.
+
+### Added
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- `PantrixMcp.http()` gives the MCP server over Streamable HTTP, bound to no web framework, for a site that serves it
+  at an address of its own: an assistant is then given the address, and needs neither Java nor the jar.
+- Each release carries the MCP server's jar and the skill `pantrix-ui` as files of their own, the web demo's pages
+  serve `llms.txt` and the documents it leads to, and the package repository is a Claude Code plugin marketplace whose
+  plugin `pantrix-ui` brings the skill.
+
+### Changed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- `com.pantrixui:mcp` gives a build that depends on it MCP's Kotlin SDK too, since `PantrixMcp.server()` returns the
+  SDK's `Server`.
+
+## [0.1.0-alpha02] - 2026-10-30
+
+The second preview of 0.1.0, with one change: a page takes the whole width of a wide window by default.
+
+### Changed
+
+#### Components
+
+`com.pantrixui:components`
+
+- `PantrixPageScaffold` and `PantrixLazyPageScaffold` take the page's whole width by default (`width = PageWidth.Full`),
+  so a wide window no longer leaves the room past 1040dp empty; `PageWidth.Content` keeps a page that is read to the
+  theme's content width.
+
+## [0.1.0-alpha01] - 2026-10-29
+
+The first preview of 0.1.0, the library's first version: an alpha, whose API may still change before 0.1.0. It is
+built with Kotlin 2.4.21 and Compose Multiplatform 1.12.2.
+
+Its targets:
+
+- Android, API 30 and newer;
+- iOS: devices, and the simulator on Apple silicon;
+- the JVM;
+- JS and Wasm.
+
+It carries the following, each module under the name it is published as.
+
+### Added
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+- **Theme:** `PantrixTheme`, a brand's look in one `DesignPreset`, themes nested inside each other, a preset's
+  colours for the dark the app's reader chose (`rememberPantrixColors(preset, darkTheme)`), and the system's bars,
+  keyboard and controls on Android and iOS following the theme rather than the system's dark mode
+  (`followSystemBars`).
+- **Tokens:**
+  - colour roles, the palette and content colour;
+  - the type scale, typefaces, a typeface for code (`rememberPantrixTypography(typeface, codeTypeface)`) and a gate
+    that waits for fonts on the web, given them one by one or as a list;
+  - spacing, shapes, elevation, density, and component styles per platform;
+  - motion that follows the system's reduced motion.
+- **Accessibility:** focus rings, touch targets, modal layers, keeping a focused field clear of bars, and each
+  platform's conventions.
+- **Adaptive layout:**
+  - window size classes, breakpoints, page margins, layout columns and a maximum content width;
+  - foldable postures on Android and iOS, and overlays that keep to one side of a fold;
+  - the vertical bar iOS shows on a foldable iPhone's cover screen.
+- **Localisation:** Turkish, English and Arabic strings, right-to-left layout, the day a week starts on, numbers in
+  each language's digits, and alphabetical order by language.
+- **Platform services:** haptics, the clipboard, picking, dropping and saving files (`FileSaver`), keyboard shortcuts,
+  putting the keyboard away with a tap outside a field (`Modifier.clearFocusOnTap`), resize pointers, system settings,
+  the window's title after the screen shown, and dates and times without a date library.
+- **For tests and products:** automation tags (`TestScope`, `pantrixTestTagOf` for the tag a test looks for, and
+  `Modifier.pantrixAutomationRoot` for the tags in a window of the app's own to reach Android's automation), a screen's
+  clock, file picker and file saver that a test or a preview gives (`LocalPantrixClock`, `LocalFilePicker`,
+  `LocalFileSaver`), and UI events for analytics, which carry each component's tag even in a build that keeps its tags
+  out of the semantics tree (`TestTagPolicy.Off`).
+- **Diagnostics:** checks a running screen is put to while its theme is given `diagnostics`: one tag on two nodes,
+  colours that do not read, a squeezed touch target, a blank name, a language without strings of its own and a
+  shadowed shortcut. Their findings go to the log or are kept for a test, and `contrastRatio` measures two colours as
+  WCAG 2.2 does.
+
+#### Components
+
+`com.pantrixui:components`
+
+100 components, each named `Pantrix…`:
+
+- **Elements:**
+  - text, icons and images;
+  - buttons, icon buttons, button groups, segment buttons whose labels may be set in a type of their own, links,
+    underlined always or under a pointer (`LinkUnderline`), and chips;
+  - badges, avatars, dividers, skeletons and spinners;
+  - checkboxes, radio buttons and radio groups, and switches, whose label may be set in a type of its own, each
+    with its control before its label or at the end of the row (`ControlPosition`);
+  - a file drop zone and its file rows;
+  - a scroll bar for a screen's own content: a column that scrolls with it (`Modifier.pantrixVerticalScroll`) and a
+    lazy list (`Modifier.pantrixScrollBar`).
+- **Inputs:** text fields, filled and secure, whose boxes of several lines show how far their text is scrolled, fields
+  that grow with their text, and text areas, outlined and filled, with a handle that resizes them, a limit their text
+  may pass (`TextLimit`) and a submit on Ctrl or Cmd and Enter.
+- **Date and time:** a date picker, a time picker, masked date and time fields, and an elastic date picker for ranges.
+- **Containers:** a surface, a card whose body fills the height it is given, its actions at the foot, an accordion, an
+  alert whose message may hold code and links, in a type of its own where an app gives one, with an edge in a colour of
+  its own and its room across apart from its room up and down, tabs, a top bar with its back button, a scaffold, a page
+  inside it with its bar or heading, its actions laid out by the room and a list's form, and a screen outside it with a
+  showcase beside its form, the form alone in a narrow room, with the adaptive list-detail, supporting-pane, tabletop
+  and two-pane layouts.
+- **Navigation:** a breadcrumb, which may sit as low as a line of text, a navigation bar, a navigation rail and a
+  sidebar whose groups may carry a title, its rows and titles set in a type of their own, with a scroll bar where its
+  rows do not fit.
+- **Overlays:** a modal layer of the app's own (`PantrixModal`), a dialog, a sheet along the bottom, the end or the
+  start edge, a popover, a menu with a check on the row chosen and a second line under a row's label in a type of its
+  own, a tooltip, a snackbar, a select, a multi-select, a command palette whose commands may carry a second line, and
+  an inspector that shows over an app what its theme's diagnostics have found.
+- **Data:** list rows with a title, the lines over and under it, what leads and ends them, a chevron and a line under
+  them (`PantrixListItem`), a data table, a tree view, a carousel, a code block with tabs at its header's start, its own
+  type and a height a row can ask of it before its lines are built, a JSON view, tags in a type of their own where an
+  app gives one, and pagination with its page jump and page size.
+- **Charts:**
+  - line, area, range, bar, waterfall and candlestick charts, and a chart that combines their series;
+  - pie and polar charts, a gauge, a progress circle, a meter group, a status tracker and a sparkline;
+  - scatter and radar charts, a heatmap and a treemap;
+  - funnel, Sankey and Gantt charts.
+
+  They come with zoom, a navigator and export to PNG, SVG and PDF.
+- **Forms:** `FormState` and its fields, with their rules, their errors and the submission. The text fields, the
+  text areas, the checkbox, the radio group, the switch, the selects and the date and time fields bind to a field
+  directly.
+
+#### Annotations
+
+`com.pantrixui:annotations`
+
+- `@PantrixComponent` and `@PantrixExample`, which describe each component for tooling: its name, group, description
+  and keywords, and its short examples. `@PantrixComponentPart` marks a part of a component.
+
+#### Material 3
+
+`com.pantrixui:material3`
+
+- A bridge between Pantrix's theme and Material 3's, both ways: `PantrixThemeFromMaterial` gives Pantrix's components
+  inside a Material theme its colours, type and shapes, and the system's bars its dark unless it is told
+  `followSystemBars = false`, and `MaterialThemeFromPantrix` gives Material's components inside a Pantrix theme
+  Pantrix's. `toPantrixColors`, `toColorScheme`, `toPantrixTypography`, `toMaterialTypography`, `toPantrixShapes`
+  and `toMaterialShapes` convert one theme's values to the other's, and `PantrixContentFromMaterial` and
+  `MaterialContentFromPantrix` carry one system's content colour and text style to the other's components on a mixed
+  screen. It is built against Material 3 1.9.0, and an app's newer Material 3 is the one it gets.
+
+#### Testing
+
+`com.pantrixui:testing`
+
+- For an app's tests on every target: finding a component by its tag (`onPantrixNode`, `hasPantrixTag`, `pantrixTags`),
+  a theme of fixed defaults (`PantrixTestTheme`, `onEachPlatform`), doubles of the clipboard, the file picker and the
+  file saver, analytics, haptics and the clock, and assertions of the diagnostics' findings, names, touch targets,
+  shortcuts and text. On Android it brings the activity a Compose test starts.
+
+#### Tooling
+
+`com.pantrixui:detekt-rules`, `com.pantrixui:mcp`
+
+- detekt rules for an app built on the library: layout that follows the reading direction (`FixedSideLayout`),
+  pictures that say what they show (`ImageWithoutDescription`) and controls with a `tagKey` (`UntaggedControl`), on
+  by default. The library's own conventions come as further rules an app can turn on.
+- `com.pantrixui:mcp`, for coding assistants: the library's documents, written from its sources (`llms.txt`,
+  `llms-full.txt`, a page for each page of the demo, each module's API, the guides for apps, and `pantrix-ui.json` with
+  its schema), the demo's pages, the guides and the changelog in Turkish too, the skill `pantrix-ui`, and an MCP server
+  that answers from them with twelve tools, nine resources and three prompts. Its jar with the classifier `all` runs the
+  server by itself and carries the licences of what it bundles.
