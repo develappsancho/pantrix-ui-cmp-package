@@ -8,7 +8,7 @@
     {
       "name": "pantrix-ui",
       "source": "./plugins/pantrix-ui",
-      "description": "The skill pantrix-ui of Pantrix UI 0.1.0-alpha06: the library's rules, its components for Material's names and the steps of writing and reviewing a screen"
+      "description": "The skill pantrix-ui of Pantrix UI 0.1.0: the library's rules, its components for Material's names and the steps of writing and reviewing a screen"
     }
   ]
 }
