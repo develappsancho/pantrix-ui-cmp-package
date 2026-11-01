@@ -1,7 +1,7 @@
 {
   "name": "pantrix-ui",
   "displayName": "Pantrix UI",
-  "version": "0.1.0-alpha05",
+  "version": "0.1.0-alpha06",
   "description": "Builds Compose Multiplatform screens with Pantrix UI, a design system with no Material dependency, and keeps to its rules",
   "author": {
     "name": "Pantrix UI"

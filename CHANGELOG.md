@@ -10,6 +10,44 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.1.0-alpha06] - 2026-11-01
+
+The sixth preview of 0.1.0, for coding assistants and the tools built on them: the MCP server searches in Turkish
+too, puts first what holds the most of a query's words, and gives the answers of eight of its tools as data.
+
+### Added
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The MCP server's tools search in Turkish too, and take a `language`, `en` or `tr`, that picks the language their
+  answer gives the components, the pages, the guides, the examples, the declarations and the icons in: `search_components` finds
+  `PantrixSnackbarHost` by "bildirim", and `PantrixDatePicker` by "tarih seçici" or "tarih secici".
+- Eight of the MCP server's tools, `search_components`, `get_component_metadata`, `search_api`, `get_api`,
+  `search_icons`, `search_documentation`, `list_examples` and `get_example`, give their answer as data too, in the
+  call's structured content, whose shape their output schema says: for a program that builds a page of its own from it.
+- The documents for coding assistants have the library as data in Turkish, `tr/pantrix-ui.json`, and the modules' API
+  in Turkish, `tr/api/<module>.md`, with every component's description and keywords and every icon's description in
+  Turkish.
+
+### Changed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The MCP server's searches put first what holds the most of a query's words and a keyword the query names:
+  "a comment box with several lines" brings `PantrixTextArea` first, where `PantrixLineChart` used to come first.
+
+### Fixed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- `search_icons` says once that an icon is mirrored in a language read from right to left: it used to say it twice.
+
 ## [0.1.0-alpha05] - 2026-10-31
 
 The fifth preview of 0.1.0: overlays that open on iOS right after a foldable has been opened or closed, a guide

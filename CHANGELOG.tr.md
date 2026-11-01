@@ -8,6 +8,36 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.1.0-alpha06] - 2026-11-01
+
+0.1.0'ın altıncı önizlemesi, kodlama asistanları ve onların üstüne kurulan araçlar için: MCP sunucusu Türkçe de arar, bir sorunun sözcüklerinin en çoğunu taşıyanı öne koyar ve sekiz aracının cevabını veri olarak da verir.
+
+### Eklenenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   MCP sunucusunun araçları Türkçe de arar ve cevaplarının bileşenleri, sayfaları, rehberleri, örnekleri, bildirimleri ve ikonları hangi dilde vereceğini seçen bir `language` alır, `en` ya da `tr`: `search_components` "bildirim" ile `PantrixSnackbarHost`'u, "tarih seçici" ya da "tarih secici" ile `PantrixDatePicker`'ı bulur.
+*   MCP sunucusunun sekiz aracı, `search_components`, `get_component_metadata`, `search_api`, `get_api`, `search_icons`, `search_documentation`, `list_examples` ve `get_example`, cevabını çağrının yapılandırılmış içeriğinde veri olarak da verir; biçimini çıktı şemaları söyler: cevaptan kendi sayfasını kuran bir program için.
+*   Kodlama asistanlarının belgelerinde kütüphanenin Türkçesi veri olarak, `tr/pantrix-ui.json`, ve modüllerin API'sinin Türkçesi, `tr/api/<modül>.md`, var; her bileşenin açıklaması ve anahtar sözcükleri ve her ikonun açıklaması Türkçedir.
+
+### Değişenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   MCP sunucusunun aramaları önce bir sorunun sözcüklerinin en çoğunu ve sorunun andığı bir anahtar sözcüğü taşıyanı getirir: "a comment box with several lines" önce `PantrixTextArea`'yı getirir; önceden `PantrixLineChart` önce geliyordu.
+
+### Düzeltilenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   `search_icons` bir ikonun sağdan sola okunan bir dilde yansıdığını bir kez söyler: önceden iki kez söylüyordu.
+
 ## [0.1.0-alpha05] - 2026-10-31
 
 0.1.0'ın beşinci önizlemesi: katlanabilir bir cihaz açılıp kapandıktan hemen sonra iOS'ta açılan katmanlar, her tarayıcıda açılan bir web uygulaması için bir rehber ve Wasm çalıştıramayan bir tarayıcı için JavaScript sürümüyle web demosu.
