@@ -8,6 +8,23 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.1.1] - 2026-11-02
+
+0.1.1, 0.1.0'dan sonra bulunanları düzeltir: iOS klib'leri artık UIKit'in sınıflarını bağlamaz, onlardan biri Xcode 27.2 ile paylaşılan iOS kodunun commonize edilmesini engelliyordu; web'de sayfanın `<html lang>`'ı uygulamanın en dıştaki temasının dilini söyler; klib'ler de kaynak dosyalarını deponun köküne göre adlandırır, oysa onları derleyen makinedeki yolları bir uygulamaya taşıyorlardı. Genel API değişmez. Web uyumluluğu rehberinin yeni bir bölümü, Safari 27.2'nin Compose'un Wasm sürümünü neden boş bıraktığını ve bir sayfanın yükleyicisinin WebKit'e bunun yerine JavaScript sürümünü nasıl verdiğini anlatır.
+
+### Düzeltilenler
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+*   iOS klib'leri `com.pantrixui.foundation.adaptive.uikit` içinde UIKit'in hiçbir sınıfını, örneğin `UIHinge`'i, tutmaz: o paket yalnızca kütüphanenin katlanmayı ve dikey çubuğu okuyan kendi bildirimlerini bağlar. Kotlin/Native'in bağlamalarında olmayan her UIKit sınıfını da bağlıyordu ve Xcode 27.2 ile bunlardan biri onların bilmediği bir tipi andığı için paylaşılan iOS kodu commonize edilemiyordu.
+*   Web'de en dıştaki `PantrixTheme`, `locale`'inin dilini sayfanın `<html lang>`'ına yazar ve uygulama dilini değiştirdikçe onu izler: ekran okuyucu sayfayı açıldığı dilde okuyordu, tarayıcı da çeviriyi o dilden öneriyordu. İçindeki bir tema hiçbir şeyi değiştirmez; tema çıkınca sayfanın kendi `lang`'ı geri gelir.
+
+### Güvenlik
+
+*   Kütüphanenin klib'leri, bir uygulamanın web ve iOS derlemesinin okuduğu, her kaynak dosyasını deponun köküne göre adlandırır: derleyen makinedeki tam yolunu, o kullanıcının adı ve klasörleriyle tutuyorlardı ve web için derlenen bir uygulama bu yolları Wasm'ında taşıyordu. `foundation`, `components`, `annotations`, `testing` ve `material3`.
+
 ## [0.1.0] - 2026-11-01
 
 0.1.0, altı önizlemeden sonra Pantrix UI'ın ilk sürümü. Ondan önce önizlemeleri kullananın karşılaşacağı hatalar gözden geçirildi ve düzeltildi: hiçbir şeyin açamadığı bir bağlantı, başarısız olan bir yenileme ve genişliği olmayan bir kenar artık uygulamaya ulaşmaz; renkli bir bar'ın sekmeleri ve düğmeleri onun üstünde okunur; aramalar harfleri temanın dilinin yazdığı gibi karşılaştırır; bir kontrolün üstündeki imleç bir tıklamanın neye basacağını gösterir. İki ad, üstüne bir şey kurulmadan değişir: `DividerAlign`'ın değerleri ve `PantrixTooltip`'in `modifier`'ının neye uygulandığı. Paketleri hâlâ yalnızca GitHub Packages'tadır ve bir token ister; Maven Central sonra gelir.

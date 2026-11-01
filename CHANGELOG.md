@@ -10,6 +10,37 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.1.1] - 2026-11-02
+
+0.1.1 fixes what was found after 0.1.0: the iOS klibs no longer bind UIKit's classes, one of which kept the shared iOS
+code from being commonized with Xcode 27.2; on the web the page's `<html lang>` says the language of the app's
+outermost theme; and the klibs name their source files relative to the repository's root, where they carried the
+paths of the machine that built them into an app. The public API is unchanged. A new part of the web compatibility
+guide says why Safari 27.2 leaves a Wasm build of Compose blank, and how a page's loader gives WebKit the JavaScript
+build instead.
+
+### Fixed
+
+#### Foundation
+
+`com.pantrixui:foundation`
+
+- The iOS klibs hold no classes of UIKit's, such as `UIHinge`, in `com.pantrixui.foundation.adaptive.uikit`: that
+  package binds the library's own reading of the fold and the vertical bar alone. It bound each class of UIKit that
+  Kotlin/Native's bindings lack as well, and with Xcode 27.2 one of them named a type they lack, so the shared iOS code
+  could not be commonized.
+- On the web the outermost `PantrixTheme` writes its `locale`'s language into the page's `<html lang>`, and follows it
+  as the app changes its language: a screen reader read the page in the language the page was opened in, and the
+  browser offered to translate from it. A theme inside it changes nothing, and the page's own `lang` comes back once
+  the theme leaves.
+
+### Security
+
+- The library's klibs, which an app's build for the web and for iOS reads, name each source file relative to the
+  repository's root: they held the full path it had on the machine that built them, with that user's name and folders,
+  and an app built for the web carried those paths in its Wasm. `foundation`, `components`, `annotations`, `testing`
+  and `material3`.
+
 ## [0.1.0] - 2026-11-01
 
 0.1.0, Pantrix UI's first version after six previews. Before it, the faults a user of the previews would meet were
