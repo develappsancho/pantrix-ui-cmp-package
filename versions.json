@@ -1,0 +1,52 @@
+{
+  "latest": "0.1.0-alpha01",
+  "versions": [
+    {
+      "version": "0.1.0-alpha01",
+      "date": "2026-10-29",
+      "tag": "v0.1.0-alpha01",
+      "commit": "92eccf7d1867",
+      "kotlin": "2.4.21",
+      "compose": "1.12.2",
+      "notes": {
+        "en": "https://github.com/develappsancho/pantrix-ui-cmp-package/blob/main/releases/0.1.0-alpha01/RELEASE_NOTES.md",
+        "tr": "https://github.com/develappsancho/pantrix-ui-cmp-package/blob/main/releases/0.1.0-alpha01/RELEASE_NOTES.tr.md"
+      },
+      "packages": [
+        {
+          "artifact": "com.pantrixui:foundation",
+          "jar": 837818,
+          "declarations": 1583
+        },
+        {
+          "artifact": "com.pantrixui:components",
+          "jar": 6513194,
+          "declarations": 3677
+        },
+        {
+          "artifact": "com.pantrixui:annotations",
+          "jar": 3901,
+          "declarations": 13
+        },
+        {
+          "artifact": "com.pantrixui:material3",
+          "jar": 23161,
+          "declarations": 21
+        },
+        {
+          "artifact": "com.pantrixui:testing",
+          "jar": 46306,
+          "declarations": 70
+        },
+        {
+          "artifact": "com.pantrixui:detekt-rules",
+          "jar": 91738
+        },
+        {
+          "artifact": "com.pantrixui:mcp",
+          "jar": 4605060
+        }
+      ]
+    }
+  ]
+}
