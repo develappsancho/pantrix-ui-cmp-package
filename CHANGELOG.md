@@ -10,6 +10,20 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.1.0-alpha02] - 2026-10-30
+
+The second preview of 0.1.0, with one change: a page takes the whole width of a wide window by default.
+
+### Changed
+
+#### Components
+
+`com.pantrixui:components`
+
+- `PantrixPageScaffold` and `PantrixLazyPageScaffold` take the page's whole width by default (`width = PageWidth.Full`),
+  so a wide window no longer leaves the room past 1040dp empty; `PageWidth.Content` keeps a page that is read to the
+  theme's content width.
+
 ## [0.1.0-alpha01] - 2026-10-29
 
 The first preview of 0.1.0, the library's first version: an alpha, whose API may still change before 0.1.0. It is
