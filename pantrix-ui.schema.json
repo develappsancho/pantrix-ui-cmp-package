@@ -1,0 +1,345 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pantrix UI",
+  "description": "Pantrix UI as data, for coding assistants and tools: the library's modules, the demo app's pages with their examples, the components, and every public declaration with its parameters. The build writes it from the library's sources and the demo's at every build, in English as pantrix-ui.json and in Turkish as tr/pantrix-ui.json, which has the demo's pages as the demo writes them, the components' descriptions and keywords, and the library's documentation in its Turkish where it has one. A field that would say nothing is left out; its description says what it is then.",
+  "type": "object",
+  "required": ["$schema", "library", "categories", "pages", "components", "declarations", "icons"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "description": "Where this schema is: its file name beside the document, or its address where the documents are served from.",
+      "type": "string"
+    },
+    "library": {
+      "description": "The library itself.",
+      "type": "object",
+      "required": ["name", "group", "version", "description", "modules"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "const": "Pantrix UI" },
+        "group": { "description": "The Maven group of every artifact.", "type": "string", "const": "com.pantrixui" },
+        "version": { "description": "The version the artifacts are published under.", "type": "string", "minLength": 1 },
+        "description": { "description": "What the library is, in Markdown, as its README says it first.", "type": "string", "minLength": 1 },
+        "modules": {
+          "description": "The library's modules, the one an app starts with first.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/module" }
+        }
+      }
+    },
+    "categories": {
+      "description": "The groups the demo app shows its pages in, in its order.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/category" }
+    },
+    "pages": {
+      "description": "The demo app's pages, in its order: a component's, or a page of the theme, the window or a service.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/page" }
+    },
+    "components": {
+      "description": "Every component, in the order of its page and then of its name.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/component" }
+    },
+    "declarations": {
+      "description": "Every public declaration of the library, by module and then as its sources have them.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/topLevelDeclaration" }
+    },
+    "icons": {
+      "description": "The icons of PantrixIcons, which the components draw with and an app may use too.",
+      "type": "array",
+      "items": { "$ref": "#/$defs/icon" }
+    }
+  },
+  "$defs": {
+    "module": {
+      "type": "object",
+      "required": ["name", "artifact", "description", "packages"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "description": "The module's name, the last part of its artifact.", "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "artifact": { "description": "What an app depends on: group and name.", "type": "string", "pattern": "^com\\.pantrixui:[a-z0-9-]+$" },
+        "description": { "description": "What the module is for.", "type": "string" },
+        "packages": {
+          "description": "The packages its public declarations are in, in order.",
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$" }
+        }
+      }
+    },
+    "category": {
+      "type": "object",
+      "required": ["key", "title", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "description": "How a page names the group.", "type": "string", "pattern": "^[a-z]+$" },
+        "title": { "description": "The group's name.", "type": "string", "minLength": 1 },
+        "summary": { "description": "The line the demo writes under the group's title.", "type": "string" }
+      }
+    },
+    "page": {
+      "type": "object",
+      "required": ["key", "title", "category", "path", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "description": "The page's key: its address on the web, `date-picker`, and the name of its Markdown file.", "$ref": "#/$defs/pageKey" },
+        "title": { "description": "The page's name.", "type": "string", "minLength": 1 },
+        "category": { "description": "The key of the page's group.", "type": "string", "pattern": "^[a-z]+$" },
+        "path": { "description": "The page's Markdown document, from the folder of the English documents: pages/<key>.md, and tr/pages/<key>.md in the document in Turkish.", "type": "string", "pattern": "^(tr/)?pages/[a-z0-9]+(-[a-z0-9]+)*\\.md$" },
+        "summary": { "description": "What the page is for, in Markdown: a paragraph or more.", "type": "string", "minLength": 1 },
+        "features": {
+          "description": "What the page's subject can do, one Markdown item each. None where it is left out.",
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "components": {
+          "description": "The names of the components this is the page of. None where it is left out: a page of the theme, the window or a service.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "api": {
+          "description": "The ids of the declarations the page documents, in its order.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "examples": {
+          "description": "The page's examples, in its order.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/example" }
+        }
+      }
+    },
+    "pageKey": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "example": {
+      "description": "An example of a page: code the demo app compiles and draws.",
+      "type": "object",
+      "required": ["name", "title", "imports", "code"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "description": "The demo's composable the example is.", "type": "string" },
+        "title": { "description": "What the example shows, in a few words.", "type": "string", "minLength": 1 },
+        "description": { "description": "What the page says of the example, in Markdown. Nothing where it is left out.", "type": "string" },
+        "imports": {
+          "description": "What the code imports, each by its full name as an import line names it.",
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Za-z_][\\w.]*( as \\w+)?$" }
+        },
+        "code": {
+          "description": "The example's code: the body of a composable, and under it every declaration of the demo's examples it calls, so that it holds all a reader needs but the imports and the names in appNames.",
+          "type": "string",
+          "minLength": 1
+        },
+        "appNames": {
+          "description": "What the code calls of the demo app itself, which an app writes for itself. None where it is left out.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "description": "What the code calls it by.", "type": "string" },
+              "description": { "description": "What the demo says of it.", "type": "string" }
+            }
+          }
+        },
+        "windowed": { "description": "Whether the example reads the window: its look depends on the window's size. False where it is left out.", "type": "boolean" },
+        "folds": { "description": "Whether the example reads the window's folds too. False where it is left out.", "type": "boolean" }
+      }
+    },
+    "component": {
+      "description": "A component, as the annotation on its primary overload describes it.",
+      "type": "object",
+      "required": ["name", "function", "category", "description", "keywords", "module", "package", "declaration", "overloads", "page"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "description": "The component's name without `Pantrix`: `Button`.", "type": "string", "pattern": "^[A-Z]\\w*$" },
+        "function": { "description": "The composable it is: `PantrixButton`.", "type": "string", "pattern": "^[A-Z]\\w*$" },
+        "category": { "description": "The group of packages it is in under com.pantrixui.components: `elements`.", "type": "string" },
+        "description": { "description": "One sentence on what it is for.", "type": "string", "minLength": 1 },
+        "keywords": {
+          "description": "The words someone looking for it would use that its name does not say: what other design systems and platforms call it, and what it is used for. In the document's language and in lower case.",
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9çğıöşüâîû]+([ +.-][a-z0-9çğıöşüâîû]+)*$" }
+        },
+        "module": { "description": "The name of its module.", "type": "string" },
+        "package": { "description": "Its package.", "type": "string" },
+        "declaration": { "description": "The id of its primary overload.", "type": "string" },
+        "overloads": {
+          "description": "The ids of all its overloads, the primary one first.",
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        },
+        "parts": {
+          "description": "The ids of the composables that are parts of it, such as a menu's item. None where it is left out.",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "page": { "description": "The key of its page.", "$ref": "#/$defs/pageKey" },
+        "tags": {
+          "description": "The names its automation tags start with, as its documentation says them: the tag of `Sheet` for the key `save` is `Sheet_save`. The first is the component's own; the others are its parts'. None where it is left out.",
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[A-Z]\\w*$" }
+        },
+        "snippets": {
+          "description": "The short examples its annotations carry: code a reader could paste into a composable, which the compiler does not read, whose text comes from an app's resources.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "code"],
+            "additionalProperties": false,
+            "properties": {
+              "title": { "type": "string", "minLength": 1 },
+              "code": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    },
+    "declarationFields": {
+      "description": "What every declaration says: a top-level one, and a member of a type.",
+      "type": "object",
+      "required": ["name", "kind", "signature", "description"],
+      "properties": {
+        "id": {
+          "description": "How the rest of the document names it: its package and name, an extension's type before its name, and the types of a function's parameters after it where several declarations would share the id. A type inside another has its name after its type's id. A member that is no type has none.",
+          "type": "string"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "kind": { "type": "string", "enum": ["function", "property", "class", "interface", "object", "enum", "annotation", "typealias"] },
+        "modifiers": {
+          "description": "What is written before it and says more than who may call it, and `var` for a property a caller can set. None where it is left out.",
+          "type": "array",
+          "items": { "type": "string", "enum": ["data", "sealed", "abstract", "open", "value", "inline", "suspend", "operator", "infix", "const", "lateinit", "fun", "var"] }
+        },
+        "composable": { "description": "Whether it is a composable function. False where it is left out.", "type": "boolean" },
+        "receiver": { "description": "The type an extension is declared on, as written.", "type": "string" },
+        "signature": { "description": "What it declares, as written in Kotlin, with the values of the constants its defaults name.", "type": "string", "minLength": 1 },
+        "type": { "description": "A property's type, as written.", "type": "string" },
+        "value": { "description": "What a constant is, as written.", "type": "string" },
+        "description": { "description": "What its documentation says, in Markdown.", "type": "string" },
+        "returns": { "description": "What a function's documentation says it gives back.", "type": "string" },
+        "deprecated": { "description": "What its deprecation says, where it is deprecated.", "type": "string" },
+        "parameters": {
+          "description": "A function's or a primary constructor's parameters, in order: of an enum's constructor, which only the enum calls, its public properties. None where it is left out.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/parameter" }
+        },
+        "constructors": {
+          "description": "A class's other constructors that a caller can call. None where it is left out.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["signature", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "signature": { "type": "string", "minLength": 1 },
+              "description": { "type": "string" },
+              "parameters": { "type": "array", "items": { "$ref": "#/$defs/parameter" } }
+            }
+          }
+        },
+        "entries": {
+          "description": "An enum's entries, in order.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "description"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "pattern": "^[A-Z]\\w*$" },
+              "description": { "type": "string" }
+            }
+          }
+        },
+        "members": {
+          "description": "What a type declares for its callers: its properties, its functions and the types inside it. What it overrides is left out.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/member" }
+        },
+        "companion": {
+          "description": "What is called on a type's own name, `Type.Default`, `Type.of(…)`.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/member" }
+        },
+        "component": { "description": "The name of the component a composable is the primary overload of.", "type": "string" },
+        "partOf": { "description": "The name of the component a composable is a part of.", "type": "string" }
+      }
+    },
+    "topLevelDeclaration": {
+      "description": "A top-level declaration of the library.",
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/declarationFields" }],
+      "required": ["id", "module", "package", "platform", "source"],
+      "unevaluatedProperties": false,
+      "properties": {
+        "module": { "description": "The name of its module.", "type": "string" },
+        "package": { "description": "Its package.", "type": "string" },
+        "platform": {
+          "description": "Where it is: `common` for every platform, else the platform's source set, `web` for both JS and Wasm.",
+          "type": "string",
+          "enum": ["common", "android", "ios", "jvm", "js", "wasmJs", "web"]
+        },
+        "pages": {
+          "description": "The keys of the pages that document it. None where it is left out: the module's reference documents it.",
+          "type": "array",
+          "items": { "$ref": "#/$defs/pageKey" }
+        },
+        "source": {
+          "description": "Where it is written.",
+          "type": "object",
+          "required": ["path", "line"],
+          "additionalProperties": false,
+          "properties": {
+            "path": { "description": "The file, from the root of the repository.", "type": "string", "pattern": "^ui/[a-z0-9]+/src/\\w+Main/kotlin/.+\\.kt$" },
+            "line": { "description": "The line its declaration starts on, counted from one.", "type": "integer", "minimum": 1 }
+          }
+        }
+      }
+    },
+    "member": {
+      "description": "A member of a type.",
+      "type": "object",
+      "allOf": [{ "$ref": "#/$defs/declarationFields" }],
+      "unevaluatedProperties": false
+    },
+    "parameter": {
+      "type": "object",
+      "required": ["name", "type", "kind", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "type": { "description": "Its type, as written.", "type": "string", "minLength": 1 },
+        "kind": {
+          "description": "What its type asks of a caller, in one word. Data a text can carry: `string`, `boolean`, `integer`, `number`, `color` (`Color(0xFF6750A4)`), `dimension` (`16.dp`), `enum` (an entry of the library's enum `ref`), `type` (a value of the library's type `ref`), `list` and `map` (`ref` the library's type of what they hold, where it is one). Code only a program can give: `modifier`, `composable` (a slot the caller draws into), `function` (any other lambda). And `generic`, a type parameter, and `external`, any other type of Compose or Kotlin.",
+          "type": "string",
+          "enum": ["string", "boolean", "integer", "number", "color", "dimension", "enum", "type", "list", "map", "modifier", "composable", "function", "generic", "external"]
+        },
+        "nullable": { "description": "Whether its type takes `null`. False where it is left out.", "type": "boolean" },
+        "vararg": { "description": "Whether it takes any number of arguments. False where it is left out.", "type": "boolean" },
+        "default": { "description": "What it is where the caller gives nothing, as written. Where it is left out, a caller has to give it.", "type": "string" },
+        "defaultNote": { "description": "What the library says of a function its default calls that a caller cannot see.", "type": "string" },
+        "ref": { "description": "The id of the library's type a caller builds a value of for it: its own type, or the type of what a list or a map of it holds.", "type": "string" },
+        "description": {
+          "description": "What the documentation says of it. Empty where the declaration's own description says it, by its name in the text: Kotlin's way of describing a parameter that fits into what the declaration says.",
+          "type": "string"
+        }
+      }
+    },
+    "icon": {
+      "type": "object",
+      "required": ["name", "description"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "description": "Its name: `PantrixIcons.<name>`.", "type": "string", "pattern": "^[A-Z]\\w*$" },
+        "description": { "description": "What it shows, and what it is for.", "type": "string" },
+        "mirrored": { "description": "Whether it is drawn mirrored in a language read from right to left. False where it is left out.", "type": "boolean" }
+      }
+    }
+  }
+}
