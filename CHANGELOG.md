@@ -10,6 +10,33 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.2.1] - 2026-11-11
+
+0.2.1 fixes two things found after 0.2.0. A mouse that drags the scroll thumb of a long list far puts the list
+straight there: a document of fifty thousand lines in `PantrixCodeEditor` stalled at every step of such a drag, as
+did any long list behind Pantrix's scroll bar. And the documents for coding assistants carry the whole code of the
+code editor's examples, seven of which stopped at the first line of a helper written as a raw string. The public API
+is unchanged.
+
+### Fixed
+
+#### Components
+
+`com.pantrixui:components`
+
+- A mouse that drags the scroll bar's thumb of a long list farther than a screen puts the list straight there, in
+  `PantrixCodeEditor`, `PantrixCodeBlock`, `PantrixJsonView`, `PantrixLazyTreeView`, `PantrixDiffView`,
+  `PantrixDataTable` and a `LazyColumn` given `Modifier.pantrixScrollBar`: the list was scrolled by pixels and built
+  every row it passed, and the drag of a document of fifty thousand lines stalled for most of a second a step.
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The MCP server's documents, and `llms-full.txt` and `pantrix-ui.json` beside the web demo, carry the whole code of
+  an example whose helper is a raw string closed in the first column: seven examples of `PantrixCodeEditor` stopped
+  at the helper's first line, `private val TASKS = """`, and did not compile.
+
 ## [0.2.0] - 2026-11-11
 
 0.2.0 adds eight components for an app that works on documents and code: `PantrixCodeEditor`, `PantrixLazyTreeView`,

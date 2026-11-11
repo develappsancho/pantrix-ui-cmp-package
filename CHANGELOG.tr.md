@@ -8,6 +8,24 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.2.1] - 2026-11-11
+
+0.2.1, 0.2.0'dan sonra bulunan iki şeyi düzeltir. Bir fare uzun bir listenin kaydırma başparmağını uzağa sürüklediğinde liste doğrudan oraya konur: `PantrixCodeEditor`'daki elli bin satırlık bir belge böyle bir sürüklemenin her adımında takılıyordu, Pantrix'in kaydırma çubuğu olan her uzun liste de öyle. Kodlama asistanları için belgeler de kod editörünün örneklerinin kodunu bütün taşır; yedisi ham bir dizgi olarak yazılmış bir yardımcının ilk satırında duruyordu. Genel API değişmez.
+
+### Düzeltilenler
+
+#### Bileşenler
+
+`com.pantrixui:components`
+
+*   Bir fare, uzun bir listenin kaydırma çubuğunun başparmağını bir ekrandan uzağa sürüklediğinde liste doğrudan oraya konur; `PantrixCodeEditor`, `PantrixCodeBlock`, `PantrixJsonView`, `PantrixLazyTreeView`, `PantrixDiffView`, `PantrixDataTable` ve `Modifier.pantrixScrollBar` verilen bir `LazyColumn`'da: liste piksel piksel kaydırılıyor ve geçtiği her satırı kuruyordu, elli bin satırlık bir belgenin sürüklenmesi her adımda neredeyse bir saniye takılıyordu.
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   MCP sunucusunun belgeleri, web demosunun yanındaki `llms-full.txt` ve `pantrix-ui.json` da, yardımcısı ilk kolonda kapanan ham bir dizgi olan bir örneğin kodunu bütün taşır: `PantrixCodeEditor`'ın yedi örneği yardımcının ilk satırında, `private val TASKS = """`'ta duruyordu ve derlenmiyordu.
+
 ## [0.2.0] - 2026-11-11
 
 0.2.0, belgelerle ve kodla çalışan bir uygulama için sekiz bileşen ekler: `PantrixCodeEditor`, `PantrixLazyTreeView`, `PantrixKeycaps`, `PantrixGraph`, `PantrixToolbar`, `PantrixStatusBar`, `PantrixDiffView` ve `PantrixEmptyState`; hepsi 108. Çevrelerinde bir paylaşım sayfası, panodaki metin ve bir düğümün duyduğu yapıştırma, önizlemeler için bir tema, bir dilin aramadaki küçük harfleri ve listeleri, kapanan ve henüz kaydedilmemiş sekmeler, `PantrixDataTable`'da seçili bir hücre ve içerik genişliğinde, ortada duran bir sayfa gelir. İki değişiklik bir çağrıyı bozar: `tagKey` her bileşenin son parametresidir, bütün argümanları konumla verilen bir `DataTableColumn` da sonuncusunu adıyla verir. iOS'ta bir tablonun semantik ağacı üçte bir kadar küçülür, bir listenin sayfası da odağı alttaki bar'ın üstünde tutar.
