@@ -1,6 +1,83 @@
 {
-  "latest": "0.1.1",
+  "latest": "0.2.0",
   "versions": [
+    {
+      "version": "0.2.0",
+      "date": "2026-11-11",
+      "tag": "v0.2.0",
+      "since": "v0.1.1",
+      "commit": "49e787bc38c6",
+      "kotlin": "2.4.21",
+      "compose": "1.12.2",
+      "notes": {
+        "en": "https://github.com/develappsancho/pantrix-ui-cmp-package/blob/main/releases/0.2.0/RELEASE_NOTES.md",
+        "tr": "https://github.com/develappsancho/pantrix-ui-cmp-package/blob/main/releases/0.2.0/RELEASE_NOTES.tr.md"
+      },
+      "packages": [
+        {
+          "artifact": "com.pantrixui:components",
+          "jar": 8471887,
+          "declarations": 4497,
+          "added": 819,
+          "changed": 63,
+          "removed": 0,
+          "files": 337,
+          "commits": 25
+        },
+        {
+          "artifact": "com.pantrixui:foundation",
+          "jar": 907235,
+          "declarations": 1712,
+          "added": 127,
+          "changed": 4,
+          "removed": 0,
+          "files": 54,
+          "commits": 13
+        },
+        {
+          "artifact": "com.pantrixui:testing",
+          "jar": 50945,
+          "declarations": 91,
+          "added": 21,
+          "changed": 0,
+          "removed": 0,
+          "files": 18,
+          "commits": 5
+        },
+        {
+          "artifact": "com.pantrixui:mcp",
+          "jar": 6557566,
+          "files": 7,
+          "commits": 4
+        },
+        {
+          "artifact": "com.pantrixui:detekt-rules",
+          "jar": 100009,
+          "files": 7,
+          "commits": 5
+        },
+        {
+          "artifact": "com.pantrixui:annotations",
+          "jar": 3901,
+          "declarations": 13,
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "files": 0,
+          "commits": 0
+        },
+        {
+          "artifact": "com.pantrixui:material3",
+          "jar": 23161,
+          "declarations": 21,
+          "added": 0,
+          "changed": 0,
+          "removed": 0,
+          "files": 0,
+          "commits": 0
+        }
+      ]
+    },
     {
       "version": "0.1.1",
       "date": "2026-11-02",
