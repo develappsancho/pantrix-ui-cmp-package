@@ -10,6 +10,34 @@ What changed in Pantrix UI, for someone who uses the library.
 - **What gets a line:** CONTRIBUTING.md says which changes get one, and how it is
   written.
 
+## [0.2.2] - 2026-11-28
+
+0.2.2 lets a comparison say what is wrong on its lines. `PantrixDiffView` draws a `CodeMark` on either side of a
+line, as `PantrixCodeBlock` draws one: its bar, and under the line its message, what said so and its actions; a
+marked line never folds away. The documents for coding assistants no longer give counts that fall behind as the
+library grows. Code built against 0.2.1 keeps working: what is new stands beside what was there.
+
+### Added
+
+#### Components
+
+`com.pantrixui:components`
+
+- `DiffLine.beforeMark` and `DiffLine.afterMark`, what is said about each side of a line of `PantrixDiffView`, as
+  a `CodeMark`: the bar down the side's start, the message, what said so and the mark's actions as buttons under
+  the line, and on an unchanged line the mark's band. A marked line is never folded away. `DiffLine.copy` marks the
+  lines `diffLines` gives; code built against 0.2.1's constructor keeps working.
+
+### Fixed
+
+#### Tooling
+
+`com.pantrixui:mcp`
+
+- The guide for coding assistants and the testing guide, in the MCP server's documents and in `llms-full.txt`, no
+  longer give counts that fall behind as the library grows: they said 24 guides, 118 pages of the demo and a
+  `llms-full.txt` of 4.7 MB, where 0.2.1 has 29 guides, 126 pages and 5.2 MB.
+
 ## [0.2.1] - 2026-11-11
 
 0.2.1 fixes two things found after 0.2.0. A mouse that drags the scroll thumb of a long list far puts the list

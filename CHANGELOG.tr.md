@@ -8,6 +8,26 @@ Pantrix UI'da nelerin değiştiği, kütüphaneyi kullanan biri için.
 *   **Kırıcı değişiklikler:** 1.0.0'a kadar bir minor sürüm API'yi bozabilir. Bozan bir değişiklik **Kırıcı** diye işaretlenir.
 *   **Hangi değişiklik satır alır:** hangilerinin aldığını ve satırın nasıl yazıldığını CONTRIBUTING.tr.md anlatır.
 
+## [0.2.2] - 2026-11-28
+
+0.2.2, bir karşılaştırmanın satırlarında neyin yanlış olduğunu söylemesini sağlar. `PantrixDiffView`, `PantrixCodeBlock`'un çizdiği gibi, bir satırın iki tarafına da bir `CodeMark` çizer: çubuğunu, satırın altında da mesajını, onu söyleyeni ve eylemlerini; işaretli bir satır hiç katlanmaz. Kodlama asistanlarının belgeleri, kütüphane büyüdükçe eskiyen sayılar yazmaz. 0.2.1'e karşı derlenmiş kod çalışmayı sürdürür: yeni olan, eskinin yanına eklenir.
+
+### Eklenenler
+
+#### Bileşenler
+
+`com.pantrixui:components`
+
+*   `DiffLine.beforeMark` ve `DiffLine.afterMark`, `PantrixDiffView`'ın bir satırının her tarafı hakkında söylenen, bir `CodeMark` olarak: tarafın başındaki çubuk, mesaj, onu söyleyen ve işaretin eylemleri satırın altında düğmeler olarak, değişmeyen bir satırda da işaretin bandı. İşaretli bir satır hiç katlanmaz. `DiffLine.copy` `diffLines`'ın verdiği satırları işaretler; 0.2.1'in kurucusuyla derlenmiş kod çalışmayı sürdürür.
+
+### Düzeltilenler
+
+#### Araçlar
+
+`com.pantrixui:mcp`
+
+*   Kodlama asistanlarının rehberi ve test rehberi, MCP sunucusunun belgelerinde ve `llms-full.txt`'de, kütüphane büyüdükçe eskiyen sayılar yazmaz: 24 rehber, demo'nun 118 sayfası ve 4,7 MB'lık bir `llms-full.txt` diyorlardı, 0.2.1'de 29 rehber, 126 sayfa ve 5,2 MB var.
+
 ## [0.2.1] - 2026-11-11
 
 0.2.1, 0.2.0'dan sonra bulunan iki şeyi düzeltir. Bir fare uzun bir listenin kaydırma başparmağını uzağa sürüklediğinde liste doğrudan oraya konur: `PantrixCodeEditor`'daki elli bin satırlık bir belge böyle bir sürüklemenin her adımında takılıyordu, Pantrix'in kaydırma çubuğu olan her uzun liste de öyle. Kodlama asistanları için belgeler de kod editörünün örneklerinin kodunu bütün taşır; yedisi ham bir dizgi olarak yazılmış bir yardımcının ilk satırında duruyordu. Genel API değişmez.

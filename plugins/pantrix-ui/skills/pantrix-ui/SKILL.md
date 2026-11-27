@@ -88,7 +88,7 @@ Every name, parameter and example of the library is in its documents; nothing ab
 | `ListItem` | `PantrixListItem` |
 | A `LazyColumn` of nested rows that open and close: a project's files, a document of another format | `PantrixLazyTreeView` with `rememberTreeViewState()`, which `scrollToKey` brings a row into view by; a short tree in a page that scrolls is `PantrixTreeView`; a tree too large for a list takes a `TreeSource`, which gives each open branch's children as they are shown |
 | A `Column` of an `Icon`, a `Text` and a `Button` centred where a list or a search has nothing to show | `PantrixEmptyState(title, description, icon, action)` |
-| Two texts compared by hand, removed and added lines in red and green `Text`s side by side | `PantrixDiffView(before, after)`: lines aligned by Myers' diff, changed words marked, unchanged runs folded; `rememberDiffViewState()`'s `scrollToChange` goes to a change |
+| Two texts compared by hand, removed and added lines in red and green `Text`s side by side | `PantrixDiffView(before, after)`: lines aligned by Myers' diff, changed words marked, unchanged runs folded; `rememberDiffViewState()`'s `scrollToChange` goes to a change; a review's finding goes under its line as a `CodeMark`, `diffLines(before, after).map { it.copy(afterMark = …) }` given to `PantrixDiffView(lines = …)` |
 | A JSON text pretty-printed into a `LazyColumn` by hand, its objects folding, a line kept in step with a text's caret | `PantrixJsonView(json)`: `selectedPath` and `onSelect` select a line, and `rememberJsonViewState()`'s `scrollToPath` opens the way to one and brings it into view |
 | `Snackbar`, `SnackbarHost` | `PantrixSnackbarState.show`, `PantrixSnackbarHost` |
 | `TooltipBox` | `PantrixTooltip` |
